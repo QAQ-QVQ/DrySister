@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">DrySister</string>
+    <string name="up">上一张</string>
+    <string name="down">下一张</string>
+    <string name="other">换一批</string>
+    <string name="test">测试</string>
 </resources>

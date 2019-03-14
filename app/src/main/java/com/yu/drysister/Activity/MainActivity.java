@@ -2,8 +2,6 @@ package com.yu.drysister.Activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Paint;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,13 +10,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.blankj.utilcode.util.EncodeUtils;
 import com.blankj.utilcode.util.EncryptUtils;
 import com.blankj.utilcode.util.ImageUtils;
-import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.NetworkUtils;
-import com.blankj.utilcode.util.ToastUtils;
-import com.blankj.utilcode.util.Utils;
+
 import com.google.gson.Gson;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
@@ -67,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         aCache = ACache.get(this);//初始化缓存
         String HomeUrl = BASE_URL + number + "/" + page;
         OkGo.<String>get(HomeUrl)
-                .cacheMode(CacheMode.REQUEST_FAILED_READ_CACHE)//先用缓存，再用网络用网络
+                .cacheMode(CacheMode.REQUEST_FAILED_READ_CACHE)//先用缓存，再用网络
                 .cacheKey("picjson")//缓存key
                 .execute(new StringCallback() {
                     //网络请求成功调用
