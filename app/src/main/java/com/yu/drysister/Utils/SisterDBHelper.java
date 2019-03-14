@@ -1,15 +1,10 @@
 package com.yu.drysister.Utils;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.blankj.utilcode.util.ConvertUtils;
-import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.ToastUtils;
-import com.yu.drysister.APP.okAPP;
 import com.yu.drysister.Bean.Sister;
 
 import java.util.ArrayList;
@@ -20,13 +15,16 @@ public class SisterDBHelper {
     private static final String TAG = "SisterDBHelper";
     private static final String DB_NAME = "sister.db";  //数据库名
     private static final int DB_VERSION = 1;    //数据库版本号
-    private String path = "/data/data/com.yu.drysister/databases/"+DB_NAME;
+    private String path = "/data/data/com.yu.drysister/databases/"+DB_NAME;//数据库路径
     private static SisterDBHelper dbHelper;
     private SQLiteDatabase db;
-
+    private boolean flag = true;
     private SisterDBHelper() {
         db = SQLiteDatabase.openOrCreateDatabase(path,null);
-        onCreate(db);
+        while (flag){
+            onCreate(db);
+            flag = false;
+        }
     }
     //创建数据库
     private void onCreate(SQLiteDatabase db){
@@ -44,6 +42,7 @@ public class SisterDBHelper {
                 + TableDefine.COLUMN_FULI_WHO + " TEXT "
                 + ")";
         db.execSQL(createTableSql);
+        Log.e(TAG,"数据库创建成功");
     }
     /** 单例 */
     public static SisterDBHelper getInstance() {
@@ -58,7 +57,7 @@ public class SisterDBHelper {
     }
 
     /** 插入一个妹子 */
-    public void insertSister(List<Sister.ResultsBean> sister,int i) {
+    public void insertSister(List<Sister.ResultsBean> sister, int i) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(TableDefine.COLUMN_FULI_ID,sister.get(i).get_id());
         contentValues.put(TableDefine.COLUMN_FULI_CREATEAT,sister.get(i).getCreatedAt());
@@ -74,7 +73,7 @@ public class SisterDBHelper {
     }
 
     /** 插入一堆妹子(使用事务) */
-    public void insertSisters(ArrayList<Sister.ResultsBean> sisters) {
+    public void insertSisters(List<Sister.ResultsBean> sisters) {
         db.beginTransaction();
         try{
             for (Sister.ResultsBean sister: sisters) {

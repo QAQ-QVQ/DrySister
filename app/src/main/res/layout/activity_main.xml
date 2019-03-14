@@ -6,17 +6,32 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".Activity.MainActivity">
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="10">
 
+    <com.tuyenmonkey.mkloader.MKLoader
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/mkLoader"
+        app:mk_type="FishSpinner"
+        app:mk_color="@color/progress"
+        android:layout_gravity="center"/>
     <ImageView
         android:id="@+id/img_show"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:adjustViewBounds="true"
-        android:layout_weight="10"/>
+        />
+</FrameLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:id="@+id/group_btn"
+        android:visibility="invisible"
         android:orientation="horizontal">
         <Button
             android:text="@string/other"
@@ -30,6 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/btn_other"
+            android:visibility="invisible"
             android:layout_gravity="center" />
         <Button
             android:text="@string/down"
