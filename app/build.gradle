@@ -1,6 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'chengdu'
+            keyPassword '342698'
+            storePassword 'diaoyu'
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.yu.drysister"
@@ -12,7 +19,8 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -29,4 +37,5 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.2.4'
     implementation 'com.tuyenmonkey:mkloader:1.4.0'
     implementation 'com.blankj:utilcode:1.12.5'
+
 }

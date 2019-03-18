@@ -57,7 +57,7 @@ public class ACache {
 	private static final int MAX_COUNT = Integer.MAX_VALUE; // 不限制存放数据的数量
 	private static Map<String, ACache> mInstanceMap = new HashMap<String, ACache>();
 	private ACacheManager mCache;
-
+	//文件路径data/data/com.yu.drysister/cache/acache
 	public static ACache get(Context ctx) {
 		return get(ctx, "ACache");
 	}
