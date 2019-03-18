@@ -174,8 +174,6 @@ public void getJson(){
     @Override
     public void onPermissionsDenied(int requestCode, String... permission) {
     //权限获取失败
-  //  permissionBtn.setVisibility(View.VISIBLE);
- //   downBtn.setVisibility(View.INVISIBLE);
     }
 
     @Override
