@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:id="@+id/loading_err"
+    android:visibility="gone"
+    android:layout_height="match_parent">
+<TextView
+    android:gravity="center"
+    style="@style/loading_err_text"
+    android:text="加载失败!"
+    tools:ignore="MissingConstraints" />
+</RelativeLayout>

@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">DrySister</string>
+    <string name="up">上一张</string>
+    <string name="down">下一张</string>
+    <string name="download">下载</string>
+    <string name="test">测试</string>
+    <string name="not_up">没有上一张了</string>
+</resources>
