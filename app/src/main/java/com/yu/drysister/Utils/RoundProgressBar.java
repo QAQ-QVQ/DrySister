@@ -1,4 +1,4 @@
-package com.yu.drysister1.Utils;
+package com.yu.drysister.Utils;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -11,7 +11,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
-import com.yu.drysister1.R;
+import com.yu.drysister.R;
 
 
 /**

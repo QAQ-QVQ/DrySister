@@ -1,6 +1,6 @@
-package com.yu.drysister1.Utils;
+package com.yu.drysister.Utils;
 
-import com.yu.drysister1.Bean.Sister;
+import com.yu.drysister.Bean.Sister;
 
 public  class SisterUtils {
     public static Sister sister;

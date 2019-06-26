@@ -1,11 +1,11 @@
-package com.yu.drysister1.Utils;
+package com.yu.drysister.Utils;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.yu.drysister1.Bean.Sister;
+import com.yu.drysister.Bean.Sister;
 
 import java.util.ArrayList;
 import java.util.List;

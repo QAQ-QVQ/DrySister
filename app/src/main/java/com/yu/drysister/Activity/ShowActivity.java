@@ -1,4 +1,4 @@
-package com.yu.drysister1.Activity;
+package com.yu.drysister.Activity;
 
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
@@ -15,7 +14,7 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.yu.drysister1.R;
+import com.yu.drysister.R;
 
 public class ShowActivity extends AppCompatActivity {
     private ImageView showImage;

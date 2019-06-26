@@ -1,4 +1,4 @@
-package com.yu.drysister1.Activity;
+package com.yu.drysister.Activity;
 
 import android.support.v4.view.ViewPager;
 
@@ -8,7 +8,7 @@ import android.os.Bundle;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-import com.yu.drysister1.R;
+import com.yu.drysister.R;
 
 
 public class TestActivity extends AppCompatActivity {

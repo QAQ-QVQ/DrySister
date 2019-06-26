@@ -1,4 +1,4 @@
-package com.yu.drysister1.APP;
+package com.yu.drysister.APP;
 
 import android.app.Application;
 

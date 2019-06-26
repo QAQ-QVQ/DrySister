@@ -1,4 +1,4 @@
-package com.yu.drysister1.Utils;
+package com.yu.drysister.Utils;
 //网络字段
 public class TableDefine {
         public static final String TABLE_FULI = "fuli";

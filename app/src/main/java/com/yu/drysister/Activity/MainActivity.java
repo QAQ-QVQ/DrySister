@@ -1,4 +1,4 @@
-package com.yu.drysister1.Activity;
+package com.yu.drysister.Activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -27,11 +27,11 @@ import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tuyenmonkey.mkloader.MKLoader;
 
-import com.yu.drysister1.Adapter.PageAdapter;
-import com.yu.drysister1.Bean.Sister;
-import com.yu.drysister1.R;
-import com.yu.drysister1.Utils.PermissionsUtil;
-import com.yu.drysister1.Utils.SisterUtils;
+import com.yu.drysister.Adapter.PageAdapter;
+import com.yu.drysister.Bean.Sister;
+import com.yu.drysister.R;
+import com.yu.drysister.Utils.PermissionsUtil;
+import com.yu.drysister.Utils.SisterUtils;
 
 import java.io.File;
 import java.util.ArrayList;

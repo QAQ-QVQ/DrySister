@@ -1,7 +1,5 @@
-package com.yu.drysister1.Bean;
+package com.yu.drysister.Bean;
 
-
-import com.yu.drysister1.Utils.SisterUtils;
 
 import java.io.Serializable;
 import java.util.List;

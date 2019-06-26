@@ -1,4 +1,4 @@
-package com.yu.drysister1.Utils;
+package com.yu.drysister.Utils;
 
 import android.Manifest;
 import android.app.Activity;
