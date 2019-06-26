@@ -2,9 +2,9 @@ package com.yu.drysister.Adapter;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +18,6 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.yu.drysister.Bean.Sister;
 import com.yu.drysister.R;
-import com.yu.drysister.Utils.SisterUtils;
 
 public class PageAdapter extends RecyclerView.Adapter<PageAdapter.myViewHolder> {
     private Context mContext;
@@ -56,27 +55,26 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.myViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull final myViewHolder myViewHolder, final int position) {
-
-        Glide.with(mContext).load(SisterUtils.sister.getResults().get(position).getUrl())
-                .placeholder(R.drawable.icon)
-                .listener(new RequestListener<Drawable>() {
-                    //加载图片失败
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        // TODO: 2019/6/25 移除加载失败的图片
+                Glide.with(mContext).load(sister.getResults().get(position).getUrl())
+                        .placeholder(R.drawable.icon)
+                        .listener(new RequestListener<Drawable>() {
+                            //加载图片失败
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                // TODO: 2019/6/25 移除加载失败的图片
 //                        posion.add(position);
 //                        SisterUtils.sister.getResults().remove(position);
-                        flag = false;
-                        return true;
-                    }
-                    //加载图片成功
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        flag = true;
-                        return false;
-                    }
-                })
-                .into(myViewHolder.context);
+                                flag = false;
+                                return true;
+                            }
+                            //加载图片成功
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                flag = true;
+                                return false;
+                            }
+                        })
+                        .into(myViewHolder.context);
 
         //加载成功的点击
         myViewHolder.context.setOnClickListener(new View.OnClickListener() {
@@ -102,7 +100,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.myViewHolder> 
 
     @Override
     public int getItemCount() {
-        return SisterUtils.sister.getResults().size();
+        return sister.getResults().size();
     }
 
     // ① 定义点击回调接口
@@ -111,9 +109,16 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.myViewHolder> 
         void onItemLongClick(int position,boolean flag);
     }
 
+    public interface getPosion{
+        void posion(int posion);
+    }
     // ② 定义一个设置点击监听器的方法
     public void setOnItemClickListener(PageAdapter.OnItemClickListener listener) {
         this.onItemClickListener = listener;
     }
 
+    public void addSisterSize(Sister sister){
+        this.sister = sister;
+        notifyDataSetChanged();
+    }
 }

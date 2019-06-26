@@ -2,17 +2,17 @@ package com.yu.drysister.Activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
-import android.widget.Button;
 
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -31,28 +31,28 @@ import com.yu.drysister.Adapter.PageAdapter;
 import com.yu.drysister.Bean.Sister;
 import com.yu.drysister.R;
 import com.yu.drysister.Utils.PermissionsUtil;
-import com.yu.drysister.Utils.SisterUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 
 
-public class MainActivity extends AppCompatActivity implements PermissionsUtil.IPermissionsCallback {
-    private Button downloadBtn, testBtn;
+public class MainActivity extends BaseActivity implements PermissionsUtil.IPermissionsCallback {
     private RecyclerView recyclerView;
-    public int curPos = 0;//当前是哪一张
-    public int page = 1;//当前页数
+    private int page = 1;//当前页数
     private int number = 28; //当前请求数目
     private MKLoader mkLoader;
-    private static final String TAG = "NetWork";
+    private static final String TAG = "network";
     private static final String BASE_URL = "http://gank.io/api/data/福利/";
     private PermissionsUtil permissionsUtil;//权限
     private static final String destFileDir = "/storage/emulated/0/Android/data/com.yu.drysister/SisterImage";//下载后文件夹名称
     private String destFileName;//文件名 按照 妹子加当前页加索引
     private Context mContext;
     private RefreshLayout refreshLayout;
+    private Sister sister;
     public static ArrayList<Integer> posion;
     private PageAdapter  mypageAdapter;
+    private boolean isFirst = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,39 +62,6 @@ public class MainActivity extends AppCompatActivity implements PermissionsUtil.I
         initJurisdiction();
     }
 
-
-    //下载图片
-//    private void dwonloadImage() {
-//        destFileName = "妹子" + page + curPos + ".jpg";
-//        if (getFilesAllName(destFileName)) {
-//            ToastUtils.showShort("文件已存在");
-//        } else {
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    OkGo.<File>get(SisterUtils.getInstance().GetSisterBean().getResults().get(curPos).getUrl())
-//
-//                            .execute(new FileCallback(destFileDir, destFileName) {
-//                                @Override
-//                                public void onSuccess(Response<File> response) {
-//                                    ToastUtils.showShort(response.body().getName() + "下载成功");
-//                                }
-//
-//                                @Override
-//                                public void downloadProgress(Progress progress) {
-//                                    Log.e("EasyHttpActivity", "当前下载了:" + progress.currentSize + ",总共有:" + progress.totalSize + ",下载速度为:" + progress.speed);//这个totalSize一直是初始值-1，很尴尬
-//                                    Log.e("xinxi", progress.toString());
-//                                }
-//
-//                                @Override
-//                                public void onError(Response<File> response) {
-//                                    ToastUtils.showShort(response.body().getName() + "下载失败");
-//                                }
-//                            });
-//                }
-//            }).start();
-//        }
-//    }
 
     //获取文件夹下所有文件名称并判断是否重名
     public static boolean getFilesAllName(String FileName) {
@@ -121,12 +88,40 @@ public class MainActivity extends AppCompatActivity implements PermissionsUtil.I
                 .request();
     }
 
-    //初始化数据
-    private void initData() {
-        getJson();
+    //获取UI
+    private void initUI() {
+       // mkLoader = findViewById(R.id.mkLoading);
+        //        downloadBtn = findViewById(R.id.btn_download);//下载
+        recyclerView = findViewById(R.id.recyclerview);
+        refreshLayout = (RefreshLayout) findViewById(R.id.refreshLayout);
+        //设置 Header 为 贝塞尔雷达 样式
+//        refreshLayout.setRefreshHeader(new BezierRadarHeader(this).setEnableHorizontalDrag(true));
+        //设置 Footer 为 球脉冲 样式
+//        refreshLayout.setRefreshFooter(new BallPulseFooter(this).setSpinnerStyle(SpinnerStyle.Scale));
+        refreshLayout.setEnableRefresh(false);//取消下拉刷新
+        refreshLayout.setEnableLoadMore(true);
+        refreshLayout.setDisableContentWhenLoading(true);//是否在加载的时候禁止列表的操作
+        //下拉刷新
+        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshlayout) {
+                getJson();
+//                refreshlayout.finishRefresh(2000/*,false*/);//传入false表示刷新失败
+            }
+        });
+        //上拉加载
+        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(RefreshLayout refreshlayout) {
+//                refreshlayout.finishLoadMore(2000/*,false*/);//传入false表示加载失败
+                page++;
+                // number += 28;
+                getJson();
+            }
+        });
     }
 
-    //获取json
+    //获取json 初始化数据
     public void getJson() {
         String HomeUrl = BASE_URL + number + "/" + page;
         OkGo.<String>get(HomeUrl)
@@ -138,16 +133,19 @@ public class MainActivity extends AppCompatActivity implements PermissionsUtil.I
                     public void onSuccess(Response<String> response) {
                         String json = response.body();
                         if (json != null) {
-                            SisterUtils.sister = new Gson().fromJson(json, Sister.class);
-                            //设置全局唯一对象
-//                            SisterUtils.getInstance().SetSisterBean(sister);
-                            do {
-                                load();
-                            }while (false);
-
-                            mypageAdapter.notifyDataSetChanged();
-                            refreshLayout.finishLoadMore(true);//传入true表示加载成功
-                            ToastUtils.showLong("加载成功！");
+                          if (isFirst){
+                              sister = new Gson().fromJson(json,Sister.class);
+                              isFirst = false;
+                              load();
+                          }else {
+                              Sister sisterBean = new Gson().fromJson(json, Sister.class);
+//                              DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffCallBack(sister, sisterBean), true);
+                              mypageAdapter.addSisterSize(sister);
+//                              diffResult.dispatchUpdatesTo(mypageAdapter);
+                              sister.addResults(sisterBean.getResults());
+                              ToastUtils.showLong("加载成功！");
+                               refreshLayout.finishLoadMore(true);//传入true表示加载成功
+                          }
                         }
                     }
 
@@ -172,94 +170,8 @@ public class MainActivity extends AppCompatActivity implements PermissionsUtil.I
 //                        }, 10000);//延时10秒递归
                     }
 
-                    @Override
-                    public void onFinish() {
-//                        ToastUtils.showLong("第" + page + "页");
-                    }
                 });
-
     }
-
-    //获取UI
-    private void initUI() {
-
-        //        downloadBtn = findViewById(R.id.btn_download);//下载
-        //   loading = findViewById(R.id.loading_bar);//进度条
-//        mkLoader = findViewById(R.id.mkLoader);//加载进度
-//        viewPager = findViewById(R.id.view_pager);//图片
-        recyclerView = findViewById(R.id.recyclerview);
-
-        //        downloadBtn.setOnClickListener(this);
-
-        refreshLayout = (RefreshLayout) findViewById(R.id.refreshLayout);
-        //设置 Header 为 贝塞尔雷达 样式
-//        refreshLayout.setRefreshHeader(new BezierRadarHeader(this).setEnableHorizontalDrag(true));
-        //设置 Footer 为 球脉冲 样式
-//        refreshLayout.setRefreshFooter(new BallPulseFooter(this).setSpinnerStyle(SpinnerStyle.Scale));
-        refreshLayout.setEnableRefresh(false);//取消下拉刷新
-        refreshLayout.setEnableLoadMore(true);
-        refreshLayout.setDisableContentWhenLoading(true);//是否在加载的时候禁止列表的操作
-        //下拉刷新
-        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshlayout) {
-                getJson();
-//                refreshlayout.finishRefresh(2000/*,false*/);//传入false表示刷新失败
-            }
-        });
-        //上拉加载
-        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore(RefreshLayout refreshlayout) {
-//                refreshlayout.finishLoadMore(2000/*,false*/);//传入false表示加载失败
-                number += 28;
-                getJson();
-            }
-        });
-
-    }
-
-//    @Override
-//    public void onClick(View v) {
-//        switch (v.getId()) {
-//            case R.id.btn_up://上一页
-//                if (curPos > 0) {
-//                    curPos--;//当curpos == 1 时经过这一行，下一行变为0，会记载为0的图像
-//                    load();
-//                } else if (curPos == 0) {
-//                    if (page > 1) {
-//                        page--;
-//                        getJson();
-//                        curPos = (sister.getResults().size() - 1);
-//                    } else {
-//                        ToastUtils.showShort(R.string.not_up);
-//                    }
-//                }
-//                //             loading.setProgress(curPos);
-//                break;
-//            case R.id.btn_down://下一页
-//                if (curPos < (sister.getResults().size() - 1)) {
-//                    curPos++;
-//                    load();
-//                } else if (curPos == (sister.getResults().size() - 1)) {
-//                    page++;
-//                    curPos = 0;
-//                    getJson();
-//                }
-//                //            loading.setProgress(curPos);
-//                break;
-//            case R.id.btn_download://下载
-//                dwonloadImage();
-//                break;
-//            case R.id.btn_test://测试页面
-//                Intent intent = new Intent(MainActivity.this, TestActivity.class);
-//                startActivity(intent);
-//                break;
-//        }
-//    }
-
-
-
 
     //加载图片
     private void load() {
@@ -274,19 +186,19 @@ public class MainActivity extends AppCompatActivity implements PermissionsUtil.I
 //                Log.e(TAG,s+"");
 //            }
 //        }
-        mypageAdapter = new PageAdapter(mContext);
+        mypageAdapter = new PageAdapter(mContext,sister);
         mypageAdapter.setOnItemClickListener(new PageAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position,boolean flag) {
                 //点击
                 //ToastUtils.showShort("" + position);
-                if (flag) {
-                    startActivity(new Intent(MainActivity.this, ShowActivity.class).putExtra("url", SisterUtils.sister.getResults().get(position).getUrl()));
+//                if (flag) {
+                    startActivity(new Intent(MainActivity.this, ShowActivity.class).putExtra("url", sister.getResults().get(position).getUrl()).putExtra("position",position).putExtra("page",page));
                     Log.e(TAG,"short");
-                }else{
-                    ToastUtils.showShort("刷新中！");
-                    Log.e(TAG,"short:"+position);
-                }
+//                }else{
+//                    ToastUtils.showShort("刷新中！");
+//                    Log.e(TAG,"short:"+position);
+//                }
             }
 
             @Override
@@ -311,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements PermissionsUtil.I
     @Override
     public void onPermissionsGranted(int requestCode, String... permission) {
         //权限获取成功
-        initData();
+        getJson();
         initUI();
     }
 
