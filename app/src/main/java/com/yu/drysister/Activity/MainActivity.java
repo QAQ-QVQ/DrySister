@@ -193,7 +193,11 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
                 //点击
                 //ToastUtils.showShort("" + position);
 //                if (flag) {
-                    startActivity(new Intent(MainActivity.this, ShowActivity.class).putExtra("url", sister.getResults().get(position).getUrl()).putExtra("position",position).putExtra("page",page));
+                Intent intent = new Intent(MainActivity.this,ShowActivity.class);
+                intent.putExtra("url", sister.getResults().get(position).getUrl());
+                intent.putExtra("position",position+"");
+                intent.putExtra("page",page+"");
+                    startActivity(intent);
                     Log.e(TAG,"short");
 //                }else{
 //                    ToastUtils.showShort("刷新中！");

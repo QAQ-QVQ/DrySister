@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_alignParentBottom="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+        <com.jaren.lib.view.LikeView
+            android:layout_marginLeft="20dp"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/like"
+            style="@style/button_width"
+            app:checkedColor="#E91E63"
+            app:checkedLikeIconRes="@drawable/ic_btn_loved"
+            app:cirRadius="9dp"
+            app:cycleTime="2000"
+            app:defaultLikeIconRes="@drawable/ic_btn_love"
+            app:ringColor="#3F51B5" />
+
+        <com.jaren.lib.view.LikeView
+            android:layout_marginLeft="40dp"
+            android:layout_toRightOf="@+id/like"
+            android:id="@+id/give"
+            style="@style/button_width"
+            app:checkedColor="#E91E63"
+            app:checkedLikeIconRes="@drawable/ic_btn_praised"
+            app:cirRadius="9dp"
+            app:cycleTime="2000"
+            app:defaultLikeIconRes="@drawable/ic_btn_praise"
+            app:ringColor="#3F51B5" />
+
+        <ImageView
+            android:layout_marginRight="40dp"
+            android:layout_toLeftOf="@+id/share"
+            android:id="@+id/dowonload"
+            style="@style/button_width"
+            android:padding="10dp"
+            android:src="@drawable/ic_photo_download"
+           />
+
+        <ImageView
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:id="@+id/share"
+            style="@style/button_width"
+            android:padding="15dp"
+            android:src="@drawable/ic_btn_share" />
+</RelativeLayout>

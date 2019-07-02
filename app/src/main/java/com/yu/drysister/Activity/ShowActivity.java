@@ -16,6 +16,7 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.jaren.lib.view.LikeView;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.FileCallback;
 import com.lzy.okgo.model.Progress;
@@ -24,7 +25,7 @@ import com.yu.drysister.R;
 
 import java.io.File;
 
-public class ShowActivity extends BaseActivity {
+public class ShowActivity extends BaseActivity implements View.OnClickListener {
     private ImageView showImage;
     private RelativeLayout loadingErr;
     private TextView loadingErrText;
@@ -32,6 +33,8 @@ public class ShowActivity extends BaseActivity {
     private String page;
     private String position;
     private String destFileName;//文件名 按照 妹子加当前页加索引
+    private LikeView like,give;//点赞收藏
+    private ImageView dowonload,share;//下载分享
     private static final String destFileDir = "/storage/emulated/0/Android/data/com.yu.drysister/SisterImage";//下载后文件夹名称
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,22 +43,27 @@ public class ShowActivity extends BaseActivity {
         showImage = findViewById(R.id.show_image);
         loadingErr = findViewById(R.id.loading_err);
         loadingErrText = findViewById(R.id.loading_err_text);
+        like = findViewById(R.id.like);
+        like.setOnClickListener(this);
+        give = findViewById(R.id.give);
+        give.setOnClickListener(this);
+        dowonload = findViewById(R.id.dowonload);
+        dowonload.setOnClickListener(this);
+        share = findViewById(R.id.share);
+        share.setOnClickListener(this);
+
         url = getIntent().getStringExtra("url");
         page = getIntent().getStringExtra("page");
         position = getIntent().getStringExtra("position");
         load();
-        showImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dwonloadImage();
-            }
-        });
     }
+
     //下载图片
     private void dwonloadImage() {
         destFileName = "妹子" + page + position + ".jpg";
         if (getFilesAllName(destFileName)) {
             ToastUtils.showShort("文件已存在");
+            dowonload.setImageDrawable(getDrawable(R.drawable.ic_photo_downloaded));
         } else {
             new Thread(new Runnable() {
                 @Override
@@ -65,6 +73,7 @@ public class ShowActivity extends BaseActivity {
                                 @Override
                                 public void onSuccess(Response<File> response) {
                                     ToastUtils.showShort(response.body().getName() + "下载成功");
+                                    dowonload.setImageDrawable(getDrawable(R.drawable.ic_photo_downloaded));
                                 }
 
                                 @Override
@@ -124,5 +133,25 @@ public class ShowActivity extends BaseActivity {
                     }
                 })
                 .into(showImage);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.like:
+                like.toggle();
+                break;
+            case R.id.give:
+                give.toggle();
+                break;
+            case R.id.dowonload:
+                dwonloadImage();
+                break;
+            case R.id.share:
+                ToastUtils.showShort("待实现");
+                break;
+            default:
+                break;
+        }
     }
 }

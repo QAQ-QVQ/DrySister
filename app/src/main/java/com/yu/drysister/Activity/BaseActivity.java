@@ -7,13 +7,16 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 
+import com.blankj.utilcode.util.ToastUtils;
+
 public class BaseActivity extends AppCompatActivity {
-    private  String TAG = getLocalClassName();
+    private  String TAG ;
     private int param = 1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TAG = getLocalClassName();
         Log.i(TAG, "onCreate called.");
     }
 
