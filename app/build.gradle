@@ -6,6 +6,7 @@ android {
             keyAlias 'chengdu'
             keyPassword '342698'
             storePassword 'diaoyu'
+            storeFile file('C:\\Users\\Administrator\\Desktop\\DrySister\\app\\key\\dy.jks')
         }
     }
     compileSdkVersion 28

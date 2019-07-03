@@ -7,7 +7,7 @@
         <com.jaren.lib.view.LikeView
             android:layout_marginLeft="20dp"
             android:layout_alignParentLeft="true"
-            android:id="@+id/like"
+            android:id="@+id/btn_like"
             style="@style/button_width"
             app:checkedColor="#E91E63"
             app:checkedLikeIconRes="@drawable/ic_btn_loved"
@@ -18,8 +18,8 @@
 
         <com.jaren.lib.view.LikeView
             android:layout_marginLeft="40dp"
-            android:layout_toRightOf="@+id/like"
-            android:id="@+id/give"
+            android:layout_toRightOf="@+id/btn_like"
+            android:id="@+id/btn_give"
             style="@style/button_width"
             app:checkedColor="#E91E63"
             app:checkedLikeIconRes="@drawable/ic_btn_praised"
@@ -30,8 +30,8 @@
 
         <ImageView
             android:layout_marginRight="40dp"
-            android:layout_toLeftOf="@+id/share"
-            android:id="@+id/dowonload"
+            android:layout_toLeftOf="@+id/btn_share"
+            android:id="@+id/btn_dowonload"
             style="@style/button_width"
             android:padding="10dp"
             android:src="@drawable/ic_photo_download"
@@ -40,7 +40,7 @@
         <ImageView
             android:layout_alignParentRight="true"
             android:layout_marginRight="20dp"
-            android:id="@+id/share"
+            android:id="@+id/btn_share"
             style="@style/button_width"
             android:padding="15dp"
             android:src="@drawable/ic_btn_share" />
