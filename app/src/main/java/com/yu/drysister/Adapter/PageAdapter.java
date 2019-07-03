@@ -30,9 +30,6 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.myViewHolder> 
         this.mContext = Context;
         this.sister = sister;
     }
-    public PageAdapter(Context Context){
-        this.mContext = Context;
-    }
 
     //② 创建ViewHolder
     public static class myViewHolder extends RecyclerView.ViewHolder{

@@ -6,7 +6,7 @@ android {
             keyAlias 'chengdu'
             keyPassword '342698'
             storePassword 'diaoyu'
-            storeFile file('C:\\Users\\Administrator\\Desktop\\DrySister\\app\\key\\dy.jks')
+            storeFile file('app/key/dy.jks')
         }
     }
     compileSdkVersion 28
@@ -20,9 +20,10 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
 }

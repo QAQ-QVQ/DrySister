@@ -25,31 +25,25 @@ import com.lzy.okgo.model.Response;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-import com.tuyenmonkey.mkloader.MKLoader;
 
 import com.yu.drysister.Adapter.PageAdapter;
 import com.yu.drysister.Bean.Sister;
 import com.yu.drysister.R;
 import com.yu.drysister.Utils.PermissionsUtil;
 
-import java.io.File;
-import java.util.ArrayList;
 
 
 public class MainActivity extends BaseActivity implements PermissionsUtil.IPermissionsCallback {
     private RecyclerView recyclerView;
     private int page = 1;//当前页数
     private int number = 28; //当前请求数目
-    private MKLoader mkLoader;
     private static final String TAG = "network";
     private static final String BASE_URL = "http://gank.io/api/data/福利/";
     private PermissionsUtil permissionsUtil;//权限
-    private static final String destFileDir = "/storage/emulated/0/Android/data/com.yu.drysister/SisterImage";//下载后文件夹名称
-    private String destFileName;//文件名 按照 妹子加当前页加索引
     private Context mContext;
     private RefreshLayout refreshLayout;
     private Sister sister;
-    public static ArrayList<Integer> posion;
+  //  public static ArrayList<Integer> posion;
     private PageAdapter  mypageAdapter;
     private boolean isFirst = true;
 
@@ -58,25 +52,10 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
-        posion = new ArrayList<Integer>();
+      //  posion = new ArrayList<Integer>();
         initJurisdiction();
     }
 
-
-    //获取文件夹下所有文件名称并判断是否重名
-    public static boolean getFilesAllName(String FileName) {
-        File filePath = new File(destFileDir);
-        if (!filePath.exists())
-            filePath.mkdirs();//不存在就新建一个目录
-        File[] files = filePath.listFiles();
-        for (int i = 0; i < files.length; i++) {
-            Log.e(TAG, files[i].getName());
-            if (FileName.equals(files[i].getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     //获取权限
     private void initJurisdiction() {
@@ -140,9 +119,9 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
                           }else {
                               Sister sisterBean = new Gson().fromJson(json, Sister.class);
 //                              DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffCallBack(sister, sisterBean), true);
-                              mypageAdapter.addSisterSize(sister);
-//                              diffResult.dispatchUpdatesTo(mypageAdapter);
                               sister.addResults(sisterBean.getResults());
+                              mypageAdapter.notifyDataSetChanged();
+//                              diffResult.dispatchUpdatesTo(mypageAdapter);
                               ToastUtils.showLong("加载成功！");
                                refreshLayout.finishLoadMore(true);//传入true表示加载成功
                           }
@@ -187,6 +166,10 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
 //            }
 //        }
         mypageAdapter = new PageAdapter(mContext,sister);
+        //设置adapter
+        recyclerView.setAdapter(mypageAdapter);
+        //设置Item增加、移除动画
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
         mypageAdapter.setOnItemClickListener(new PageAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position,boolean flag) {
@@ -218,10 +201,7 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
             }
 
         });
-        //设置adapter
-        recyclerView.setAdapter(mypageAdapter);
-        //设置Item增加、移除动画
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
     }
 
     @Override

@@ -62,3 +62,4 @@
 -dontwarn android.support.test.**
 -dontwarn org.junit.**
 -ignorewarnings
+-keep class package.*.model.**{*;}
