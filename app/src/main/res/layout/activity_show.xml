@@ -1,42 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:clipChildren="false"
-    android:layout_height="match_parent">
-    <include layout="@layout/loading_err"></include>
-<ImageView
-    android:id="@+id/show_image"
-    android:scaleType="centerCrop"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="match_parent"
+    android:clipChildren="false">
+
+    <include layout="@layout/loading_err"></include>
+
+    <ImageView
+        android:id="@+id/show_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
+
     <include layout="@layout/show_layout"></include>
+
     <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/AppTheme.AppBarOverlay"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:minHeight="?attr/actionBarSize"
         app:contentInsetEnd="0dp"
         app:contentInsetLeft="0dp"
         app:contentInsetRight="0dp"
         app:contentInsetStart="0dp"
-        android:id="@+id/toolbar"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="20dp"
-        app:title=" "
-        style="@style/AppTheme.AppBarOverlay"
-        android:minHeight="?attr/actionBarSize" >
+        app:title=" ">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <ImageView
                 android:id="@+id/btn_back"
+                style="@style/button_width"
                 android:layout_alignParentLeft="true"
                 android:padding="13dp"
-                style="@style/button_width"
-                android:src="@drawable/ic_btn_back"/>
+                android:src="@drawable/ic_btn_back" />
+
             <ImageView
                 android:id="@+id/btn_more"
-                android:padding="13dp"
+                style="@style/button_width"
                 android:layout_alignParentRight="true"
-               style="@style/button_width"
-                android:src="@drawable/ic_btn_more"/>
+                android:padding="13dp"
+                android:src="@drawable/ic_btn_more" />
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 </RelativeLayout>

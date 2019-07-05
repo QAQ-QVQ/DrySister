@@ -26,7 +26,7 @@ public class SplashActivity extends BaseActivity {
         alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                ToastUtils.showShort("第一次加载可能会有卡顿，请谅解。");
+                ToastUtils.showShort("第一次加载可能会有卡顿，请耐心等待。");
             }
             //动画结束
             @Override

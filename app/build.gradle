@@ -1,3 +1,5 @@
+
+
 apply plugin: 'com.android.application'
 
 android {
@@ -6,8 +8,14 @@ android {
             keyAlias 'chengdu'
             keyPassword '342698'
             storePassword 'diaoyu'
-            storeFile file('app/key/dy.jks')
+            storeFile file('dy.jks')
         }
+//        debug {
+//            keyAlias 'chengdu'
+//            keyPassword '342698'
+//            storePassword 'diaoyu'
+//            storeFile file('dy.jks')
+//        }
     }
     compileSdkVersion 28
     defaultConfig {

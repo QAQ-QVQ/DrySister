@@ -1,5 +1,6 @@
 package com.yu.drysister.Activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import androidx.annotation.NonNull;
@@ -7,7 +8,11 @@ import androidx.annotation.Nullable;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Build;
 import android.os.Bundle;
+
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -39,6 +44,7 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
     private int number = 28; //当前请求数目
     private static final String TAG = "network";
     private static final String BASE_URL = "http://gank.io/api/data/福利/";
+    //https://acg.toubiec.cn/random?return=json 随机二次元图片接口
     private PermissionsUtil permissionsUtil;//权限
     private Context mContext;
     private RefreshLayout refreshLayout;
@@ -66,7 +72,6 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
                 .permissions(PermissionsUtil.Permission.Storage.READ_EXTERNAL_STORAGE, PermissionsUtil.Permission.Storage.WRITE_EXTERNAL_STORAGE)
                 .request();
     }
-
     //获取UI
     private void initUI() {
        // mkLoader = findViewById(R.id.mkLoading);

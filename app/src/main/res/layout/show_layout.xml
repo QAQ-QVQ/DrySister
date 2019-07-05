@@ -3,6 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:layout_alignParentBottom="true"
+    android:id="@+id/btn_group"
+    android:visibility="gone"
     xmlns:app="http://schemas.android.com/apk/res-auto">
         <com.jaren.lib.view.LikeView
             android:layout_marginLeft="20dp"
