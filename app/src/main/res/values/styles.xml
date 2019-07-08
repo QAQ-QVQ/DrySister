@@ -6,9 +6,13 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <!-- 修改toolbar图标的颜色-->
+        <item name="android:textColorSecondary">#ffffff</item>
+        <!--修改toolbar文字颜色-->
+        <item name="android:textColorPrimary">#ffffff</item>
     </style>
 
-     <!--values-v21。5.0 以上提供了 setStatusBarColor()  方法设置状态栏颜色。-->
+    <!--values-v21。5.0 以上提供了 setStatusBarColor()  方法设置状态栏颜色。-->
     <style name="TranslucentTheme" parent="AppTheme">
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowTranslucentNavigation">true</item>
@@ -22,17 +26,20 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:textSize">18dp</item>
     </style>
+
     <style name="button_width">
         <item name="android:gravity">center</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_width">50dp</item>
         <item name="android:textSize">18dp</item>
     </style>
+    <!--toolbar样式-->
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_height">58dp</item>
         <item name="android:layout_width">match_parent</item>
     </style>
 
+    <!--底部弹出框-->
     <style name="MyDialog" parent="@android:style/Theme.Holo.Dialog">
         <!-- 是否有边框 -->
         <item name="android:windowFrame">@null</item>
@@ -46,4 +53,17 @@
         <!--<item name="android:windowBackground">@android:color/transparent</item>-->
         <!-- 还可以加入一些弹出和退出的动画 (lan)-->
     </style>
+
+    <!--toolbar弹出框的样式-->
+    <style name="ToolBarPopupThem" parent="Widget.AppCompat.Light.PopupMenu.Overflow">
+        <!-- 设置popupMenu背景颜色-->
+        <item name="android:colorBackground">@color/colorPrimary</item>
+        <!--设置popupMenu弹出位置不覆盖toolbar -->
+        <item name="overlapAnchor">false</item>
+        <!-- 修改字体大小 -->
+        <item name="android:textSize">15sp</item>
+        <!-- 修改字体颜色 -->
+        <item name="android:textColor">#fff</item>
+    </style>
+
 </resources>

@@ -13,5 +13,11 @@
             <enum name="FILL" value="1"></enum>
         </attr>
     </declare-styleable>
-
+    <declare-styleable name="ImageViewNorner">
+        <attr name="radius" format="dimension"/>
+        <attr name="left_top_radius" format="dimension"/>
+        <attr name="right_top_radius" format="dimension"/>
+        <attr name="right_bottom_radius" format="dimension"/>
+        <attr name="left_bottom_radius" format="dimension"/>
+    </declare-styleable>
 </resources>

@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
     android:clipChildren="false">
 
     <include layout="@layout/loading_err"></include>
@@ -19,7 +20,7 @@
         android:id="@+id/toolbar"
         style="@style/AppTheme.AppBarOverlay"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:minHeight="?attr/actionBarSize"
         app:contentInsetEnd="0dp"
         app:contentInsetLeft="0dp"

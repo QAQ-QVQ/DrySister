@@ -7,17 +7,28 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -48,9 +59,10 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
     private PermissionsUtil permissionsUtil;//权限
     private Context mContext;
     private RefreshLayout refreshLayout;
+    private Toolbar toolbar;
     private Sister sister;
-  //  public static ArrayList<Integer> posion;
-    private PageAdapter  mypageAdapter;
+    //  public static ArrayList<Integer> posion;
+    private PageAdapter mypageAdapter;
     private boolean isFirst = true;
 
     @Override
@@ -58,10 +70,15 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
-      //  posion = new ArrayList<Integer>();
+        //  posion = new ArrayList<Integer>();
         initJurisdiction();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
 
     //获取权限
     private void initJurisdiction() {
@@ -72,12 +89,53 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
                 .permissions(PermissionsUtil.Permission.Storage.READ_EXTERNAL_STORAGE, PermissionsUtil.Permission.Storage.WRITE_EXTERNAL_STORAGE)
                 .request();
     }
+
     //获取UI
     private void initUI() {
-       // mkLoader = findViewById(R.id.mkLoading);
+        // mkLoader = findViewById(R.id.mkLoading);
         //        downloadBtn = findViewById(R.id.btn_download);//下载
         recyclerView = findViewById(R.id.recyclerview);
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+
         refreshLayout = (RefreshLayout) findViewById(R.id.refreshLayout);
+        /**
+         * 实现RecyclerView上下滑动的显示和隐藏****
+         *
+         * */
+//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            private static final int HIDE_THRESHOLD = 10;
+//            private int scrolledDistance = 0;
+//            private boolean controlsVisible = true;
+//
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//                Log.e(TAG, "onScrolled dy: " + dy);
+//                Log.e(TAG, "onScrolled dx: " + dx);
+//                Log.e(TAG, "-------------------- onScrolled: --------------------");
+//              //  int firstVisibleItem = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+//               // if (firstVisibleItem >= 1) {
+//                    if (scrolledDistance > HIDE_THRESHOLD && controlsVisible) {
+//                        // 隐藏toolbar
+//                        hideViews();
+//                        controlsVisible = false;
+//                        scrolledDistance = 0;
+//                    } else if (scrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
+//                        // 显示toolbar
+//                        showViews();
+//                        controlsVisible = true;
+//                        scrolledDistance = 0;
+//                    }
+//                    if ((controlsVisible && dy > 0) || (!controlsVisible && dy < 0)) {
+//                        scrolledDistance += dy;
+//                    }
+//                }
+//          //  }
+//        });
+
         //设置 Header 为 贝塞尔雷达 样式
 //        refreshLayout.setRefreshHeader(new BezierRadarHeader(this).setEnableHorizontalDrag(true));
         //设置 Footer 为 球脉冲 样式
@@ -103,6 +161,15 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
                 getJson();
             }
         });
+    }
+
+    private void hideViews() {
+        toolbar.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+      //  toolbar.setVisibility(View.GONE);
+    }
+
+    private void showViews() {
+        toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
     }
 
     //获取json 初始化数据
@@ -159,7 +226,7 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
 
     //加载图片
     private void load() {
-        RecyclerView.LayoutManager gridManager = new GridLayoutManager(mContext,4);
+        RecyclerView.LayoutManager gridManager = new GridLayoutManager(mContext,2);
         ((GridLayoutManager) gridManager).setRecycleChildrenOnDetach(true);
         //设置布局管理器
         recyclerView.setLayoutManager(gridManager);
@@ -171,6 +238,7 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
 //            }
 //        }
         mypageAdapter = new PageAdapter(mContext,sister);
+
         //设置adapter
         recyclerView.setAdapter(mypageAdapter);
         //设置Item增加、移除动画

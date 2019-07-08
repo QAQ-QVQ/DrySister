@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -20,6 +21,8 @@ import com.yu.drysister.Bean.Sister;
 import com.yu.drysister.R;
 
 public class PageAdapter extends RecyclerView.Adapter<PageAdapter.myViewHolder> {
+    private  static final  int HEADER = 0;
+    private  static final  int ITEM = 0;
     private Context mContext;
     private Sister sister;
     private boolean flag;
@@ -35,10 +38,12 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.myViewHolder> 
     public static class myViewHolder extends RecyclerView.ViewHolder{
         public final ImageView context;
         public RelativeLayout loadingErr;
+        public TextView title;
         public myViewHolder(View v) {
             super(v);
             context =  v.findViewById(R.id.imageViewItem);
             loadingErr = v.findViewById(R.id.loading_err);
+            title = v.findViewById(R.id.create_time);
         }
     }
 
@@ -46,12 +51,20 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.myViewHolder> 
     @NonNull
     @Override
     public myViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.recyclerview_item, viewGroup, false);
-        return new myViewHolder(v);
+//        if (getItemViewType(i) == HEADER){
+//            RecyclerView.LayoutParams layoutParams = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,160);
+//            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.recyclerview_item, viewGroup, false);
+//            return new myViewHolder(v);
+//        }else {
+            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.recyclerview_item, viewGroup, false);
+            return new myViewHolder(v);
+//        }
+
     }
 
     @Override
     public void onBindViewHolder(@NonNull final myViewHolder myViewHolder, final int position) {
+                myViewHolder.title.setText(sister.getResults().get(position).getDesc());
                 Glide.with(mContext).load(sister.getResults().get(position).getUrl())
                         .placeholder(R.drawable.icon)
                         .listener(new RequestListener<Drawable>() {
@@ -94,6 +107,14 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.myViewHolder> 
 
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        if (position ==0){
+            return HEADER;
+        }else {
+            return ITEM;
+        }
+    }
 
     @Override
     public int getItemCount() {
