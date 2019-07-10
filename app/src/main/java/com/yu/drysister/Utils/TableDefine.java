@@ -12,4 +12,5 @@ public class TableDefine {
         public static final String COLUMN_FULI_URL = "url";
         public static final String COLUMN_FULI_USED = "used";
         public static final String COLUMN_FULI_WHO = "who";
+        public static final String COLUMN_FULI_FLAG = "flag";
 }

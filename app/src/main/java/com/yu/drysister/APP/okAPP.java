@@ -16,6 +16,7 @@ public class okAPP extends Application {
     public void onCreate() {
         super.onCreate();
         initOkGo();
+        context = this;
         Utils.init(this);
         UMConfigure.init(this,"5d1d5f7c3fc19571ef001109"
                 ,"umeng",UMConfigure.DEVICE_TYPE_PHONE,"d1965fe55ba61afcc7bcdeda35e4799d");//58edcfeb310c93091c000be2 5965ee00734be40b580001a0

@@ -3,6 +3,7 @@ package com.yu.drysister.Activity;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -10,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.opengl.Visibility;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -25,10 +27,12 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Toast;
 
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -44,18 +48,22 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import com.yu.drysister.Adapter.PageAdapter;
 import com.yu.drysister.Bean.Sister;
+import com.yu.drysister.Dialog.AboutDialog;
+import com.yu.drysister.Dialog.DialogFromBottom;
 import com.yu.drysister.R;
+import com.yu.drysister.Utils.DbLikeDefine;
 import com.yu.drysister.Utils.PermissionsUtil;
 
 
-
+/**
+ * 主页面
+ */
 public class MainActivity extends BaseActivity implements PermissionsUtil.IPermissionsCallback {
     private RecyclerView recyclerView;
     private int page = 1;//当前页数
     private int number = 28; //当前请求数目
     private static final String TAG = "network";
     private static final String BASE_URL = "http://gank.io/api/data/福利/";
-    //https://acg.toubiec.cn/random?return=json 随机二次元图片接口
     private PermissionsUtil permissionsUtil;//权限
     private Context mContext;
     private RefreshLayout refreshLayout;
@@ -99,42 +107,79 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerView.smoothScrollToPosition(0);
+            }
+        });
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.tv_test1:
+                        Toast.makeText(mContext, "tv1", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.tv_like:
+                        Toast.makeText(mContext, "收藏", Toast.LENGTH_SHORT).show();
+                        Intent intentL = new Intent(MainActivity.this,CollectionActivity.class);
+                        intentL.putExtra("flag", DbLikeDefine.DB_LIKE);
+                        startActivity(intentL);
+                        break;
+                    case R.id.tv_give:
+                        Toast.makeText(mContext, "点赞", Toast.LENGTH_SHORT).show();
+                        Intent intentC = new Intent(MainActivity.this,CollectionActivity.class);
+                        intentC.putExtra("flag", DbLikeDefine.DB_COLLECTION);
+                        startActivity(intentC);
+                        break;
+                    case R.id.tv_about:
+                        new AboutDialog(mContext, true, new AboutDialog.onItemClicklisner() {
+                            @Override
+                            public void onclicklistner() {
+                                Toast.makeText(mContext, "关于我", Toast.LENGTH_SHORT).show();
+                            }
+                        }).show();
+                        break;
+                }
+                return false;
+            }
+        });
 
         refreshLayout = (RefreshLayout) findViewById(R.id.refreshLayout);
         /**
          * 实现RecyclerView上下滑动的显示和隐藏****
          *
          * */
-//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            private static final int HIDE_THRESHOLD = 10;
-//            private int scrolledDistance = 0;
-//            private boolean controlsVisible = true;
-//
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            private static final int HIDE_THRESHOLD = 30;
+            private int scrolledDistance = 0;
+            private boolean controlsVisible = true;
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
 //                Log.e(TAG, "onScrolled dy: " + dy);
 //                Log.e(TAG, "onScrolled dx: " + dx);
 //                Log.e(TAG, "-------------------- onScrolled: --------------------");
-//              //  int firstVisibleItem = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
-//               // if (firstVisibleItem >= 1) {
-//                    if (scrolledDistance > HIDE_THRESHOLD && controlsVisible) {
-//                        // 隐藏toolbar
-//                        hideViews();
-//                        controlsVisible = false;
-//                        scrolledDistance = 0;
-//                    } else if (scrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
-//                        // 显示toolbar
-//                        showViews();
-//                        controlsVisible = true;
-//                        scrolledDistance = 0;
-//                    }
-//                    if ((controlsVisible && dy > 0) || (!controlsVisible && dy < 0)) {
-//                        scrolledDistance += dy;
-//                    }
-//                }
-//          //  }
-//        });
+                int firstVisibleItem = ((GridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+                if (firstVisibleItem >= 1) {
+                    if (scrolledDistance > HIDE_THRESHOLD && controlsVisible) {
+                        // 隐藏toolbar
+                        hideViews();
+                        controlsVisible = false;
+                        scrolledDistance = 0;
+                    } else if (scrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
+                        // 显示toolbar
+                        showViews();
+                        controlsVisible = true;
+                        scrolledDistance = 0;
+                    }
+                    if ((controlsVisible && dy > 0) || (!controlsVisible && dy < 0)) {
+                        scrolledDistance += dy;
+                    }
+                }
+            }
+        });
 
         //设置 Header 为 贝塞尔雷达 样式
 //        refreshLayout.setRefreshHeader(new BezierRadarHeader(this).setEnableHorizontalDrag(true));
@@ -165,10 +210,11 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
 
     private void hideViews() {
         toolbar.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
-      //  toolbar.setVisibility(View.GONE);
+        toolbar.setVisibility(View.GONE);
     }
 
     private void showViews() {
+        toolbar.setVisibility(View.VISIBLE);
         toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
     }
 
@@ -184,19 +230,17 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
                     public void onSuccess(Response<String> response) {
                         String json = response.body();
                         if (json != null) {
-                          if (isFirst){
-                              sister = new Gson().fromJson(json,Sister.class);
-                              isFirst = false;
-                              load();
-                          }else {
-                              Sister sisterBean = new Gson().fromJson(json, Sister.class);
-//                              DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffCallBack(sister, sisterBean), true);
-                              sister.addResults(sisterBean.getResults());
-                              mypageAdapter.notifyDataSetChanged();
-//                              diffResult.dispatchUpdatesTo(mypageAdapter);
-                              ToastUtils.showLong("加载成功！");
-                               refreshLayout.finishLoadMore(true);//传入true表示加载成功
-                          }
+                            if (isFirst) {
+                                sister = new Gson().fromJson(json, Sister.class);
+                                isFirst = false;
+                                load();
+                            } else {
+                                Sister sisterBean = new Gson().fromJson(json, Sister.class);
+                                sister.addResults(sisterBean.getResults());
+                                mypageAdapter.notifyDataSetChanged();
+                                ToastUtils.showLong("加载成功！");
+                                refreshLayout.finishLoadMore(true);//传入true表示加载成功
+                            }
                         }
                     }
 
@@ -226,18 +270,13 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
 
     //加载图片
     private void load() {
-        RecyclerView.LayoutManager gridManager = new GridLayoutManager(mContext,2);
+        RecyclerView.LayoutManager gridManager = new GridLayoutManager(mContext, 2);
         ((GridLayoutManager) gridManager).setRecycleChildrenOnDetach(true);
         //设置布局管理器
         recyclerView.setLayoutManager(gridManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
-//       if (posion != null){
-//             for (Integer s:posion) {
-//                Log.e(TAG,s+"");
-//            }
-//        }
-        mypageAdapter = new PageAdapter(mContext,sister);
+        mypageAdapter = new PageAdapter(mContext, sister);
 
         //设置adapter
         recyclerView.setAdapter(mypageAdapter);
@@ -245,16 +284,17 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         mypageAdapter.setOnItemClickListener(new PageAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(int position,boolean flag) {
+            public void onItemClick(int position, boolean flag) {
                 //点击
                 //ToastUtils.showShort("" + position);
 //                if (flag) {
-                Intent intent = new Intent(MainActivity.this,ShowActivity.class);
-                intent.putExtra("url", sister.getResults().get(position).getUrl());
-                intent.putExtra("position",position+"");
-                intent.putExtra("page",page+"");
-                    startActivity(intent);
-                    Log.e(TAG,"short");
+                Intent intent = new Intent(mContext, ShowActivity.class);
+        //        intent.putExtra("url", sister.getResults().get(position).getUrl());
+                intent.putExtra("position", position + "");
+                intent.putExtra("page", page + "");
+                intent.putExtra("sister",sister);
+                startActivity(intent);
+                Log.e(TAG, "short");
 //                }else{
 //                    ToastUtils.showShort("刷新中！");
 //                    Log.e(TAG,"short:"+position);
@@ -262,14 +302,12 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
             }
 
             @Override
-            public void onItemLongClick(int position,boolean flag) {
+            public void onItemLongClick(int position, boolean flag) {
                 if (flag) {
                     // TODO: 2019/6/25 长按效果
                     //长按
 //                    ToastUtils.showLong("changan" + position);
-                    Log.e(TAG,"long");
-                } else {
-
+                    Log.e(TAG, "long");
                 }
             }
 

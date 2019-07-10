@@ -28,13 +28,21 @@ public class DialogFromBottom  extends Dialog {
         this.iscancelable = isCancelable;
         this.isBackCancelable = isBackCancelable ;
     }
-    public DialogFromBottom(Context context, boolean isCancelable,boolean isBackCancelable) {
+
+    /**
+     * @param context
+     * @param isCancelable 点击外部dismiss
+     * @param isBackCancelable 控制返回键是否dismiss
+     * @param onItemClicklisner 点击回调
+     */
+    public DialogFromBottom(Context context, boolean isCancelable,boolean isBackCancelable,onItemClicklisner onItemClicklisner) {
         super(context, R.style.MyDialog);
         View root =  LayoutInflater.from(context).inflate(R.layout.dialog_buttom, null);
         this.context = context;
         this.view = root;
         this.iscancelable = isCancelable;
         this.isBackCancelable = isBackCancelable ;
+        this.onItemClicklisner = onItemClicklisner;
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +50,7 @@ public class DialogFromBottom  extends Dialog {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (onItemClicklisner != null){
+                if (onItemClicklisner!=null){
                     onItemClicklisner.onclicklistner();
                 }
             }
@@ -61,9 +69,4 @@ public class DialogFromBottom  extends Dialog {
     public interface onItemClicklisner{
         void onclicklistner();
     }
-
-    public void setOnItemClicklisner(onItemClicklisner onItemClicklisner){
-        this.onItemClicklisner = onItemClicklisner;
-    }
-
 }

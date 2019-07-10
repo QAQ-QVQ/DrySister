@@ -42,23 +42,30 @@ import com.umeng.socialize.editorpage.ShareActivity;
 import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.shareboard.SnsPlatform;
 import com.umeng.socialize.utils.ShareBoardlistener;
+import com.yu.drysister.Bean.Sister;
 import com.yu.drysister.Dialog.DialogFromBottom;
 import com.yu.drysister.R;
+import com.yu.drysister.Utils.DbLikeDefine;
+import com.yu.drysister.Utils.SisterDBHelper;
+import com.yu.drysister.Utils.TableDefine;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.IllegalFormatCodePointException;
+import java.util.List;
 
 public class ShowActivity extends BaseActivity implements View.OnClickListener {
     private ImageView showImage;
     private RelativeLayout loadingErr, btnGroup;
     private TextView loadingErrText;
-    private String url;
-    private String page;
-    private String position;
-    private String destFileName;//文件名 按照 妹子加当前页加索引
+    //  private String url;
+    private Sister sister;
+    private int page;
+    private int position;
+    private String destFileName = "妹子" + page + position + ".jpg";//文件名 按照 妹子加当前页加索引
     private LikeView like, give;//点赞收藏
     private ImageView dowonload, share, back, more;//下载分享
     private Toolbar toolbar;
@@ -75,9 +82,19 @@ public class ShowActivity extends BaseActivity implements View.OnClickListener {
 
     private void initData() {
         mcontext = this;
-        url = getIntent().getStringExtra("url");
-        page = getIntent().getStringExtra("page");
-        position = getIntent().getStringExtra("position");
+        //   url = getIntent().getStringExtra("url");
+        page = Integer.parseInt(getIntent().getStringExtra("page"));
+        position = Integer.parseInt(getIntent().getStringExtra("position"));
+        sister = (Sister) getIntent().getSerializableExtra("sister");
+        if (SisterDBHelper.getInstance().getSisterFlagId(DbLikeDefine.DB_LIKE, sister.getResults().get(position).get_id())) {
+            like.setChecked(true);
+        }
+        if (SisterDBHelper.getInstance().getSisterFlagId(DbLikeDefine.DB_COLLECTION, sister.getResults().get(position).get_id())) {
+            give.setChecked(true);
+        }
+        if (getFilesAllName(destFileName)) {
+            dowonload.setImageDrawable(getDrawable(R.drawable.ic_photo_downloaded));
+        }
         load();
     }
 
@@ -103,7 +120,6 @@ public class ShowActivity extends BaseActivity implements View.OnClickListener {
 
     //下载图片
     private void dwonloadImage() {
-        destFileName = "妹子" + page + position + ".jpg";
         if (getFilesAllName(destFileName)) {
             ToastUtils.showShort("文件已存在");
             dowonload.setImageDrawable(getDrawable(R.drawable.ic_photo_downloaded));
@@ -111,7 +127,7 @@ public class ShowActivity extends BaseActivity implements View.OnClickListener {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    OkGo.<File>get(url)
+                    OkGo.<File>get(sister.getResults().get(position).getUrl())
                             .execute(new FileCallback(destFileDir, destFileName) {
                                 @Override
                                 public void onSuccess(Response<File> response) {
@@ -135,6 +151,10 @@ public class ShowActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+    /**
+     * @param FileName
+     * @return
+     */
     //获取文件夹下所有文件名称并判断是否重名
     public static boolean getFilesAllName(String FileName) {
         File filePath = new File(destFileDir);
@@ -151,7 +171,7 @@ public class ShowActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void load() {
-        Glide.with(this).load(url)
+        Glide.with(this).load(sister.getResults().get(position).getUrl())
                 //.placeholder(R.drawable.icon)
                 .listener(new RequestListener<Drawable>() {
                     //加载图片失败
@@ -186,21 +206,9 @@ public class ShowActivity extends BaseActivity implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.btn_like:
                 like.toggle();
-                //收藏
-                if (like.isChecked()) {
-
-                } else {
-
-                }
                 break;
             case R.id.btn_give:
                 give.toggle();
-                //点赞
-                if (give.isChecked()) {
-
-                } else {
-
-                }
                 break;
             case R.id.btn_dowonload:
                 dwonloadImage();
@@ -211,9 +219,9 @@ public class ShowActivity extends BaseActivity implements View.OnClickListener {
 //                        .setCallback(shareListener)
                 //  .setShareboardclickCallback(shareBoardlistener)
 //                        .open();
-
                 break;
             case R.id.btn_back:
+                saveDb();
                 finish();
                 break;
             case R.id.btn_more:
@@ -225,9 +233,29 @@ public class ShowActivity extends BaseActivity implements View.OnClickListener {
                 break;
         }
     }
+    //存储点赞收藏数据到数据库
+    private void saveDb() {
+        //收藏
+        if (like.isChecked()) {
+            SisterDBHelper.getInstance().insertSister(sister.getResults(), position, DbLikeDefine.DB_LIKE);
+        } else if (like.isChecked()) {
+            SisterDBHelper.getInstance().deleteSisterByFlagId(DbLikeDefine.DB_LIKE, sister.getResults().get(position).get_id());
+        }
+        //  点赞
+        if (give.isChecked()) {
+            SisterDBHelper.getInstance().insertSister(sister.getResults(), position, DbLikeDefine.DB_COLLECTION);
+        } else if (give.isChecked()) {
+            SisterDBHelper.getInstance().deleteSisterByFlagId(DbLikeDefine.DB_COLLECTION, sister.getResults().get(position).get_id());
+        }
+    }
 
     private void showDialog() {
-        new DialogFromBottom(mcontext, true, true).show();
+        new DialogFromBottom(mcontext, true, true, new DialogFromBottom.onItemClicklisner() {
+            @Override
+            public void onclicklistner() {
+                Toast.makeText(mcontext, "弹出框", Toast.LENGTH_SHORT).show();
+            }
+        }).show();
     }
 
     private ShareBoardlistener shareBoardlistener = new ShareBoardlistener() {
@@ -259,7 +287,7 @@ public class ShowActivity extends BaseActivity implements View.OnClickListener {
          */
         @Override
         public void onStart(SHARE_MEDIA platform) {
-            UMImage image = new UMImage(ShowActivity.this, url);//网络图片
+            UMImage image = new UMImage(ShowActivity.this, sister.getResults().get(position).getUrl());//网络图片
             image.setThumb(image);
             image.compressStyle = UMImage.CompressStyle.SCALE;//大小压缩，默认为大小压缩，适合普通很大的图
             image.compressStyle = UMImage.CompressStyle.QUALITY;//质量压缩，适合长图的分享压缩格式设置

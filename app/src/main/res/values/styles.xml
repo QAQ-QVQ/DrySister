@@ -35,7 +35,7 @@
     </style>
     <!--toolbar样式-->
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-        <item name="android:layout_height">58dp</item>
+        <item name="android:layout_height">?actionBarSize</item>
         <item name="android:layout_width">match_parent</item>
     </style>
 
