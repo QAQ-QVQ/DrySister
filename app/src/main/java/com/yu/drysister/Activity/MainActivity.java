@@ -1,6 +1,6 @@
 package com.yu.drysister.Activity;
 
-import android.Manifest;
+
 import android.content.Context;
 import android.content.Intent;
 
@@ -9,27 +9,20 @@ import androidx.annotation.Nullable;
 
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.opengl.Visibility;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
+
 import android.util.Log;
-import android.view.LayoutInflater;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Toast;
@@ -49,10 +42,13 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.yu.drysister.Adapter.PageAdapter;
 import com.yu.drysister.Bean.Sister;
 import com.yu.drysister.Dialog.AboutDialog;
-import com.yu.drysister.Dialog.DialogFromBottom;
+
+import com.yu.drysister.Interface.IwebCallback;
+import com.yu.drysister.Interface.IwebManager;
 import com.yu.drysister.R;
-import com.yu.drysister.Utils.DbLikeDefine;
+
 import com.yu.drysister.Utils.PermissionsUtil;
+import com.yu.drysister.Utils.WebFactory;
 
 
 /**
@@ -106,7 +102,7 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
+        //getSupportActionBar();
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,18 +116,18 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
                     case R.id.tv_test1:
                         Toast.makeText(mContext, "tv1", Toast.LENGTH_SHORT).show();
                         break;
-                    case R.id.tv_like:
-                        Toast.makeText(mContext, "收藏", Toast.LENGTH_SHORT).show();
-                        Intent intentL = new Intent(MainActivity.this,CollectionActivity.class);
-                        intentL.putExtra("flag", DbLikeDefine.DB_LIKE);
-                        startActivity(intentL);
-                        break;
-                    case R.id.tv_give:
-                        Toast.makeText(mContext, "点赞", Toast.LENGTH_SHORT).show();
-                        Intent intentC = new Intent(MainActivity.this,CollectionActivity.class);
-                        intentC.putExtra("flag", DbLikeDefine.DB_COLLECTION);
-                        startActivity(intentC);
-                        break;
+//                    case R.id.tv_like:
+//                        Toast.makeText(mContext, "收藏", Toast.LENGTH_SHORT).show();
+//                     //   Intent intentL = new Intent(MainActivity.this,CollectionActivity.class);
+//                     //   intentL.putExtra("flag", DbLikeDefine.DB_LIKE);
+//                     //   startActivity(intentL);
+//                        break;
+//                    case R.id.tv_give:
+//                        Toast.makeText(mContext, "点赞", Toast.LENGTH_SHORT).show();
+//                     //   Intent intentC = new Intent(MainActivity.this,CollectionActivity.class);
+//                     //   intentC.putExtra("flag", DbLikeDefine.DB_COLLECTION);
+//                     //   startActivity(intentC);
+//                        break;
                     case R.id.tv_about:
                         new AboutDialog(mContext, true, new AboutDialog.onItemClicklisner() {
                             @Override
@@ -145,7 +141,7 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
             }
         });
 
-        refreshLayout = (RefreshLayout) findViewById(R.id.refreshLayout);
+        refreshLayout =  findViewById(R.id.refreshLayout);
         /**
          * 实现RecyclerView上下滑动的显示和隐藏****
          *
@@ -202,7 +198,6 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
             public void onLoadMore(RefreshLayout refreshlayout) {
 //                refreshlayout.finishLoadMore(2000/*,false*/);//传入false表示加载失败
                 page++;
-                // number += 28;
                 getJson();
             }
         });
@@ -210,62 +205,44 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
 
     private void hideViews() {
         toolbar.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
-        toolbar.setVisibility(View.GONE);
+       // toolbar.setVisibility(View.GONE);
     }
 
     private void showViews() {
-        toolbar.setVisibility(View.VISIBLE);
+       // toolbar.setVisibility(View.VISIBLE);
         toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
     }
 
     //获取json 初始化数据
     public void getJson() {
         String HomeUrl = BASE_URL + number + "/" + page;
-        OkGo.<String>get(HomeUrl)
-                .cacheMode(CacheMode.REQUEST_FAILED_READ_CACHE)//先用缓存，再用网络
-                .cacheKey("pic" + page)//缓存key 以当前页数为key
-                .execute(new StringCallback() {
-                    //网络请求成功调用
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        String json = response.body();
-                        if (json != null) {
-                            if (isFirst) {
-                                sister = new Gson().fromJson(json, Sister.class);
-                                isFirst = false;
-                                load();
-                            } else {
-                                Sister sisterBean = new Gson().fromJson(json, Sister.class);
-                                sister.addResults(sisterBean.getResults());
-                                mypageAdapter.notifyDataSetChanged();
-                                ToastUtils.showLong("加载成功！");
-                                refreshLayout.finishLoadMore(true);//传入true表示加载成功
-                            }
-                        }
+        IwebManager iwebManager = WebFactory.getWebManager();
+        iwebManager.get(HomeUrl,"pic" + page, new IwebCallback() {
+            @Override
+            public void onSuccess(String response) {
+                if (response != null) {
+                    if (isFirst) {
+                        sister = new Gson().fromJson(response, Sister.class);
+                        isFirst = false;
+                        load();
+                    } else {
+                        Sister sisterBean = new Gson().fromJson(response, Sister.class);
+                        sister.addResults(sisterBean.getResults());
+                        mypageAdapter.notifyDataSetChanged();
+                        ToastUtils.showLong("加载成功！");
+                        refreshLayout.finishLoadMore(true);//传入true表示加载成功
                     }
+                }
+            }
 
-                    //缓存请求成功调用
-                    @Override
-                    public void onCacheSuccess(Response<String> response) {
-                        onSuccess(response);
-                    }
-
-                    //网络请求失败
-                    @Override
-                    public void onError(Response<String> response) {
-                        refreshLayout.finishLoadMore(false);//下拉加载失败
-                        //refreshLayout.finishLoadMore(2000/*,false*/);//2s后延迟执行
-                        //当网络未连接且无缓存时出现的提示
-                        ToastUtils.showShort("网络未连接！");
-//                        new Handler().postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                getJson();
-//                            }
-//                        }, 10000);//延时10秒递归
-                    }
-
-                });
+            @Override
+            public void onFailure(Throwable throwable) {
+                refreshLayout.finishLoadMore(false);//下拉加载失败
+                //refreshLayout.finishLoadMore(2000/*,false*/);//2s后延迟执行
+                //当网络未连接且无缓存时出现的提示
+                ToastUtils.showShort("网络未连接！");
+            }
+        });
     }
 
     //加载图片

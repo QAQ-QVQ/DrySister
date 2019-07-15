@@ -19,14 +19,14 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TAG = getClass().getSimpleName();
-        Log.i(TAG, "onCreate called.");
+        Log.e(TAG, "onCreate called.");
     }
 
     //Activity创建或者从后台重新回到前台时被调用
     @Override
     protected void onStart() {
         super.onStart();
+        TAG = getClass().getSimpleName();
         Log.e(TAG, "onStart called.");
     }
 

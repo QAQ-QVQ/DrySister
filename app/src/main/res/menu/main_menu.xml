@@ -3,15 +3,15 @@
     <item
         android:id="@+id/tv_test1"
         android:icon="@mipmap/ic_launcher"
-        android:title="待定" />
-    <item
-        android:id="@+id/tv_like"
-        android:icon="@mipmap/ic_launcher"
-        android:title="好看的「收藏」页面" />
-    <item
-        android:id="@+id/tv_give"
-        android:icon="@mipmap/ic_launcher"
-        android:title="精致的「点赞」页面" />
+        android:title="精致的「未知」页面" />
+    <!--<item-->
+        <!--android:id="@+id/tv_like"-->
+        <!--android:icon="@mipmap/ic_launcher"-->
+        <!--android:title="好看的「收藏」页面" />-->
+    <!--<item-->
+        <!--android:id="@+id/tv_give"-->
+        <!--android:icon="@mipmap/ic_launcher"-->
+        <!--android:title="精致的「点赞」页面" />-->
     <item
         android:id="@+id/tv_about"
         android:icon="@mipmap/ic_launcher"

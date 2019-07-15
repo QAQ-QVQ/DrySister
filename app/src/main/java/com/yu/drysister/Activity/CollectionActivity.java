@@ -88,7 +88,7 @@ public class CollectionActivity extends BaseActivity {
     }
 
     private void getDate() {
-        
+        // TODO: 2019/7/10 没有数据显示无数据页面
         resultsBeanList = SisterDBHelper.getInstance().getSistersLimit(page,number,flag);
         sister = new Sister(false,resultsBeanList);
     }

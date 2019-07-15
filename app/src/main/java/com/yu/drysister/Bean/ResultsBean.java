@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * CREATED BY DY ON 2019/7/10.
- * TIME BU 16:34.
+ * TIME BY 16:34.
  **/
 public  class ResultsBean implements Serializable {
     /**
