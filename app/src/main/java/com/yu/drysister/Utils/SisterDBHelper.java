@@ -38,24 +38,24 @@ public class SisterDBHelper {
 
     /**
      * 插入一个妹子
-     * @param sister 妹子
+     * @param resultsBean 妹子
      * @param i 索引
      * @param flag 收藏还是点赞
      * @return
      */
-    public void insertSister(List<ResultsBean> sister, int i, String flag) {
-        if (!getSisterFlagId(flag,sister.get(i).get_id())){
+    public void insertSister(ResultsBean resultsBean, String flag) {
+        if (!getSisterFlagId(flag,resultsBean.get_id())){
             db = getWritableDB();
             ContentValues contentValues = new ContentValues();
-            contentValues.put(TableDefine.COLUMN_FULI_ID,sister.get(i).get_id());
-            contentValues.put(TableDefine.COLUMN_FULI_CREATEAT,sister.get(i).getCreatedAt());
-            contentValues.put(TableDefine.COLUMN_FULI_DESC,sister.get(i).getDesc());
-            contentValues.put(TableDefine.COLUMN_FULI_PUBLISHEDAT,sister.get(i).getPublishedAt());
-            contentValues.put(TableDefine.COLUMN_FULI_SOURCE,sister.get(i).getSource());
-            contentValues.put(TableDefine.COLUMN_FULI_TYPE,sister.get(i).getType());
-            contentValues.put(TableDefine.COLUMN_FULI_URL,sister.get(i).getUrl());
-            contentValues.put(TableDefine.COLUMN_FULI_USED,sister.get(i).isUsed());
-            contentValues.put(TableDefine.COLUMN_FULI_WHO,sister.get(i).getWho());
+            contentValues.put(TableDefine.COLUMN_FULI_ID,resultsBean.get_id());
+            contentValues.put(TableDefine.COLUMN_FULI_CREATEAT,resultsBean.getCreatedAt());
+            contentValues.put(TableDefine.COLUMN_FULI_DESC,resultsBean.getDesc());
+            contentValues.put(TableDefine.COLUMN_FULI_PUBLISHEDAT,resultsBean.getPublishedAt());
+            contentValues.put(TableDefine.COLUMN_FULI_SOURCE,resultsBean.getSource());
+            contentValues.put(TableDefine.COLUMN_FULI_TYPE,resultsBean.getType());
+            contentValues.put(TableDefine.COLUMN_FULI_URL,resultsBean.getUrl());
+            contentValues.put(TableDefine.COLUMN_FULI_USED,resultsBean.isUsed());
+            contentValues.put(TableDefine.COLUMN_FULI_WHO,resultsBean.getWho());
             contentValues.put(TableDefine.COLUMN_FULI_FLAG,flag);
             db.insert(TableDefine.TABLE_FULI,null,contentValues);
             closeIO(null);

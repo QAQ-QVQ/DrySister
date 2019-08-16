@@ -3,22 +3,17 @@ package com.yu.drysister.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
@@ -28,47 +23,56 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.jaren.lib.view.LikeView;
 import com.lzy.okgo.OkGo;
-import com.lzy.okgo.callback.BitmapCallback;
 import com.lzy.okgo.callback.FileCallback;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.model.Response;
-import com.umeng.qq.handler.UmengQQShareContent;
 import com.umeng.socialize.ShareAction;
-import com.umeng.socialize.ShareContent;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
-import com.umeng.socialize.editorpage.ShareActivity;
 import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.shareboard.SnsPlatform;
 import com.umeng.socialize.utils.ShareBoardlistener;
-import com.yu.drysister.Bean.Sister;
+import com.yu.drysister.Bean.ResultsBean;
 import com.yu.drysister.Dialog.DialogFromBottom;
 import com.yu.drysister.R;
 import com.yu.drysister.Utils.DbLikeDefine;
 import com.yu.drysister.Utils.SisterDBHelper;
-import com.yu.drysister.Utils.TableDefine;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.IllegalFormatCodePointException;
-import java.util.List;
 
-public class ShowActivity extends BaseActivity implements View.OnClickListener {
-    private ImageView showImage;
-    private RelativeLayout loadingErr, btnGroup;
-    private TextView loadingErrText;
-    //  private String url;
-    private Sister sister;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+public class ShowActivity extends BaseActivity {
+    @BindView(R.id.loading_err_text)
+    TextView loadingErrText;
+    @BindView(R.id.loading_err)
+    RelativeLayout loadingErr;
+    @BindView(R.id.show_image)
+    ImageView showImage;
+    @BindView(R.id.btn_like)
+    LikeView btnLike;//收藏
+    @BindView(R.id.btn_give)
+    LikeView btnGive;//点赞
+    @BindView(R.id.btn_dowonload)
+    ImageView btnDowonload;
+    @BindView(R.id.btn_share)
+    ImageView btnShare;//分享
+    @BindView(R.id.btn_group)
+    RelativeLayout btnGroup;
+    @BindView(R.id.btn_back)
+    ImageView btnBack;
+    @BindView(R.id.btn_more)
+    ImageView btnMore;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
+    private ResultsBean resultsBean;
     private int page;
     private int position;
     private String destFileName = "妹子" + page + position + ".jpg";//文件名 按照 妹子加当前页加索引
-    private LikeView like, give;//点赞收藏
-    private ImageView dowonload, share, back, more;//下载分享
-    private Toolbar toolbar;
     private Context mcontext;
     private static final String destFileDir = "/storage/emulated/0/Android/data/com.yu.drysister/SisterImage";//下载后文件夹名称
 
@@ -76,78 +80,52 @@ public class ShowActivity extends BaseActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show);
-        initView();
+        ButterKnife.bind(this);
         initData();
     }
 
     private void initData() {
         mcontext = this;
-        //   url = getIntent().getStringExtra("url");
         page = Integer.parseInt(getIntent().getStringExtra("page"));
         position = Integer.parseInt(getIntent().getStringExtra("position"));
-        sister = (Sister) getIntent().getSerializableExtra("sister");
-        if (SisterDBHelper.getInstance().getSisterFlagId(DbLikeDefine.DB_LIKE, sister.getResults().get(position).get_id())) {
-            like.setChecked(true);
+        resultsBean = (ResultsBean) getIntent().getSerializableExtra("ResultsBean");
+        if (SisterDBHelper.getInstance().getSisterFlagId(DbLikeDefine.DB_LIKE, resultsBean.get_id())) {
+            btnLike.setChecked(true);
         }
-        if (SisterDBHelper.getInstance().getSisterFlagId(DbLikeDefine.DB_COLLECTION, sister.getResults().get(position).get_id())) {
-            give.setChecked(true);
+        if (SisterDBHelper.getInstance().getSisterFlagId(DbLikeDefine.DB_COLLECTION, resultsBean.get_id())) {
+            btnGive.setChecked(true);
         }
         if (getFilesAllName(destFileName)) {
-            dowonload.setImageDrawable(getDrawable(R.drawable.ic_photo_downloaded));
+            btnDowonload.setImageDrawable(getDrawable(R.drawable.ic_photo_downloaded));
         }
         load();
-    }
-
-    private void initView() {
-        showImage = findViewById(R.id.show_image);
-        loadingErr = findViewById(R.id.loading_err);
-        btnGroup = findViewById(R.id.btn_group);
-        loadingErrText = findViewById(R.id.loading_err_text);
-        toolbar = findViewById(R.id.toolbar);
-        like = findViewById(R.id.btn_like);
-        like.setOnClickListener(this);
-        give = findViewById(R.id.btn_give);
-        give.setOnClickListener(this);
-        dowonload = findViewById(R.id.btn_dowonload);
-        dowonload.setOnClickListener(this);
-        share = findViewById(R.id.btn_share);
-        share.setOnClickListener(this);
-        back = findViewById(R.id.btn_back);
-        back.setOnClickListener(this);
-        more = findViewById(R.id.btn_more);
-        more.setOnClickListener(this);
     }
 
     //下载图片
     private void dwonloadImage() {
         if (getFilesAllName(destFileName)) {
             ToastUtils.showShort("文件已存在");
-            dowonload.setImageDrawable(getDrawable(R.drawable.ic_photo_downloaded));
+            btnDowonload.setImageDrawable(getDrawable(R.drawable.ic_photo_downloaded));
         } else {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    OkGo.<File>get(sister.getResults().get(position).getUrl())
-                            .execute(new FileCallback(destFileDir, destFileName) {
-                                @Override
-                                public void onSuccess(Response<File> response) {
-                                    ToastUtils.showShort(response.body().getName() + "下载成功");
-                                    dowonload.setImageDrawable(getDrawable(R.drawable.ic_photo_downloaded));
-                                }
+            OkGo.<File>get(resultsBean.getUrl())
+                    .execute(new FileCallback(destFileDir, destFileName) {
+                        @Override
+                        public void onSuccess(Response<File> response) {
+                            ToastUtils.showShort(response.body().getName() + "下载成功");
+                            btnDowonload.setImageDrawable(getDrawable(R.drawable.ic_photo_downloaded));
+                        }
 
-                                @Override
-                                public void downloadProgress(Progress progress) {
-                                    Log.e("EasyHttpActivity", "当前下载了:" + progress.currentSize + ",总共有:" + progress.totalSize + ",下载速度为:" + progress.speed);//这个totalSize一直是初始值-1，很尴尬
-                                    Log.e("xinxi", progress.toString());
-                                }
+                        @Override
+                        public void downloadProgress(Progress progress) {
+                            Log.e("EasyHttpActivity", "当前下载了:" + progress.currentSize + ",总共有:" + progress.totalSize + ",下载速度为:" + progress.speed);//这个totalSize一直是初始值-1，很尴尬
+                            Log.e("xinxi", progress.toString());
+                        }
 
-                                @Override
-                                public void onError(Response<File> response) {
-                                    ToastUtils.showShort(response.body().getName() + "下载失败");
-                                }
-                            });
-                }
-            }).start();
+                        @Override
+                        public void onError(Response<File> response) {
+                            ToastUtils.showShort(response.body().getName() + "下载失败");
+                        }
+                    });
         }
     }
 
@@ -171,7 +149,7 @@ public class ShowActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void load() {
-        Glide.with(this).load(sister.getResults().get(position).getUrl())
+        Glide.with(this).load(resultsBean.getUrl())
                 //.placeholder(R.drawable.icon)
                 .listener(new RequestListener<Drawable>() {
                     //加载图片失败
@@ -201,51 +179,24 @@ public class ShowActivity extends BaseActivity implements View.OnClickListener {
                 .into(showImage);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_like:
-                like.toggle();
-                break;
-            case R.id.btn_give:
-                give.toggle();
-                break;
-            case R.id.btn_dowonload:
-                dwonloadImage();
-                break;
-            case R.id.btn_share:
-                ToastUtils.showShort("待实现");
-//                new ShareAction(this).withText("请选择分享平台").setDisplayList(SHARE_MEDIA.QQ,SHARE_MEDIA.WEIXIN)
-//                        .setCallback(shareListener)
-                //  .setShareboardclickCallback(shareBoardlistener)
-//                        .open();
-                break;
-            case R.id.btn_back:
-                saveDb();
-                finish();
-                break;
-            case R.id.btn_more:
-                // TODO: 2019/7/3 更多按钮
-                //   ToastUtils.showShort("待实现");
-                showDialog();
-                break;
-            default:
-                break;
-        }
-    }
     //存储点赞收藏数据到数据库
     private void saveDb() {
-        //收藏
-        if (like.isChecked()) {
-            SisterDBHelper.getInstance().insertSister(sister.getResults(), position, DbLikeDefine.DB_LIKE);
-        } else if (like.isChecked()) {
-            SisterDBHelper.getInstance().deleteSisterByFlagId(DbLikeDefine.DB_LIKE, sister.getResults().get(position).get_id());
-        }
-        //  点赞
-        if (give.isChecked()) {
-            SisterDBHelper.getInstance().insertSister(sister.getResults(), position, DbLikeDefine.DB_COLLECTION);
-        } else if (give.isChecked()) {
-            SisterDBHelper.getInstance().deleteSisterByFlagId(DbLikeDefine.DB_COLLECTION, sister.getResults().get(position).get_id());
+        if (SisterDBHelper.getInstance().getSisterFlagId(DbLikeDefine.DB_LIKE, resultsBean.get_id())) {
+            if (!btnLike.isChecked()) {
+                //数据库中存在同时取消点赞，就删除
+                SisterDBHelper.getInstance().deleteSisterByFlagId(DbLikeDefine.DB_LIKE, resultsBean.get_id());
+            }
+            if (!btnGive.isChecked()) {
+                SisterDBHelper.getInstance().deleteSisterByFlagId(DbLikeDefine.DB_COLLECTION, resultsBean.get_id());
+            }
+        } else {
+            //数据库不存在同时点赞，就插入数据库
+            if (btnLike.isChecked()) {
+                SisterDBHelper.getInstance().insertSister(resultsBean, DbLikeDefine.DB_LIKE);
+            }
+            if (btnGive.isChecked()) {
+                SisterDBHelper.getInstance().insertSister(resultsBean, DbLikeDefine.DB_COLLECTION);
+            }
         }
     }
 
@@ -287,7 +238,7 @@ public class ShowActivity extends BaseActivity implements View.OnClickListener {
          */
         @Override
         public void onStart(SHARE_MEDIA platform) {
-            UMImage image = new UMImage(ShowActivity.this, sister.getResults().get(position).getUrl());//网络图片
+            UMImage image = new UMImage(ShowActivity.this, resultsBean.getUrl());//网络图片
             image.setThumb(image);
             image.compressStyle = UMImage.CompressStyle.SCALE;//大小压缩，默认为大小压缩，适合普通很大的图
             image.compressStyle = UMImage.CompressStyle.QUALITY;//质量压缩，适合长图的分享压缩格式设置
@@ -331,5 +282,41 @@ public class ShowActivity extends BaseActivity implements View.OnClickListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        saveDb();
+    }
+
+    @OnClick({R.id.btn_like, R.id.btn_give, R.id.btn_dowonload, R.id.btn_share, R.id.btn_back, R.id.btn_more})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.btn_like:
+                btnLike.toggle();
+                break;
+            case R.id.btn_give:
+                btnGive.toggle();
+                break;
+            case R.id.btn_dowonload:
+                dwonloadImage();
+                break;
+            case R.id.btn_share:
+                ToastUtils.showShort("待实现");
+//                new ShareAction(this).withText("请选择分享平台").setDisplayList(SHARE_MEDIA.QQ,SHARE_MEDIA.WEIXIN)
+//                        .setCallback(shareListener)
+                //  .setShareboardclickCallback(shareBoardlistener)
+//                        .open();
+                break;
+            case R.id.btn_back:
+                finish();
+                break;
+            case R.id.btn_more:
+                // TODO: 2019/7/3 更多按钮
+                //   ToastUtils.showShort("待实现");
+                showDialog();
+                break;
+        }
     }
 }

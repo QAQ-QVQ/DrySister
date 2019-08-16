@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'com.jakewharton.butterknife'
 android {
     signingConfigs {
         config {
@@ -14,11 +14,15 @@ android {
 //            storePassword 'diaoyu'
 //            storeFile file('dy.jks')
 //        }
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
     }
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.yu.drysister"
-        minSdkVersion 22
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -61,4 +65,9 @@ dependencies {
     implementation 'org.jetbrains:annotations-java5:15.0'
     //动态按钮
     implementation 'com.jaren:likeview:1.2.2'
+    //BaseRecyclerViewAdapterHelper
+    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47-androidx'
+    //butterknife
+    implementation 'com.jakewharton:butterknife:10.1.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
 }

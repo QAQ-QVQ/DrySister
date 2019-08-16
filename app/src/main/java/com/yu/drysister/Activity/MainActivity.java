@@ -12,6 +12,7 @@ import androidx.appcompat.app.ActionBar;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,16 +20,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 
 import com.blankj.utilcode.util.ToastUtils;
+import com.bumptech.glide.Glide;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheMode;
@@ -40,6 +48,7 @@ import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import com.yu.drysister.Adapter.PageAdapter;
+import com.yu.drysister.Bean.ResultsBean;
 import com.yu.drysister.Bean.Sister;
 import com.yu.drysister.Dialog.AboutDialog;
 
@@ -47,8 +56,12 @@ import com.yu.drysister.Interface.IwebCallback;
 import com.yu.drysister.Interface.IwebManager;
 import com.yu.drysister.R;
 
+import com.yu.drysister.Utils.DbLikeDefine;
 import com.yu.drysister.Utils.PermissionsUtil;
 import com.yu.drysister.Utils.WebFactory;
+
+import java.util.List;
+import java.util.zip.Inflater;
 
 
 /**
@@ -63,10 +76,10 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
     private PermissionsUtil permissionsUtil;//权限
     private Context mContext;
     private RefreshLayout refreshLayout;
-    private Toolbar toolbar;
+//    private Toolbar toolbar;
     private Sister sister;
     //  public static ArrayList<Integer> posion;
-    private PageAdapter mypageAdapter;
+    private Mydapter mypageAdapter;
     private boolean isFirst = true;
 
     @Override
@@ -96,50 +109,31 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
 
     //获取UI
     private void initUI() {
-        // mkLoader = findViewById(R.id.mkLoading);
-        //        downloadBtn = findViewById(R.id.btn_download);//下载
         recyclerView = findViewById(R.id.recyclerview);
-
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        //getSupportActionBar();
-        toolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recyclerView.smoothScrollToPosition(0);
-            }
-        });
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.tv_test1:
-                        Toast.makeText(mContext, "tv1", Toast.LENGTH_SHORT).show();
-                        break;
-//                    case R.id.tv_like:
-//                        Toast.makeText(mContext, "收藏", Toast.LENGTH_SHORT).show();
-//                     //   Intent intentL = new Intent(MainActivity.this,CollectionActivity.class);
-//                     //   intentL.putExtra("flag", DbLikeDefine.DB_LIKE);
-//                     //   startActivity(intentL);
+//        toolbar = findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                switch (item.getItemId()) {
+//                    case R.id.tv_test:
+//                        Toast.makeText(mContext, "测试", Toast.LENGTH_SHORT).show();
+//                        Intent intentL = new Intent(MainActivity.this,TestActivity.class);
+//                        intentL.putExtra("sister",sister);
+//                        startActivity(intentL);
 //                        break;
-//                    case R.id.tv_give:
-//                        Toast.makeText(mContext, "点赞", Toast.LENGTH_SHORT).show();
-//                     //   Intent intentC = new Intent(MainActivity.this,CollectionActivity.class);
-//                     //   intentC.putExtra("flag", DbLikeDefine.DB_COLLECTION);
-//                     //   startActivity(intentC);
+//                    case R.id.tv_about:
+//                        new AboutDialog(mContext, true, new AboutDialog.onItemClicklisner() {
+//                            @Override
+//                            public void onclicklistner() {
+//                                Toast.makeText(mContext, "关于我", Toast.LENGTH_SHORT).show();
+//                            }
+//                        }).show();
 //                        break;
-                    case R.id.tv_about:
-                        new AboutDialog(mContext, true, new AboutDialog.onItemClicklisner() {
-                            @Override
-                            public void onclicklistner() {
-                                Toast.makeText(mContext, "关于我", Toast.LENGTH_SHORT).show();
-                            }
-                        }).show();
-                        break;
-                }
-                return false;
-            }
-        });
+//                }
+//                return false;
+//            }
+//        });
 
         refreshLayout =  findViewById(R.id.refreshLayout);
         /**
@@ -204,13 +198,23 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
     }
 
     private void hideViews() {
-        toolbar.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
-       // toolbar.setVisibility(View.GONE);
+//        toolbar.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
     }
 
     private void showViews() {
-       // toolbar.setVisibility(View.VISIBLE);
-        toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+//        toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+    }
+
+    class Mydapter extends BaseQuickAdapter<ResultsBean, BaseViewHolder> {
+        public Mydapter(int layoutResId, @Nullable List<ResultsBean> data) {
+            super(layoutResId, data);
+        }
+
+        @Override
+        protected void convert(@NonNull BaseViewHolder helper, ResultsBean item) {
+            helper.setText(R.id.create_time,item.getDesc());
+            Glide.with(MainActivity.this).load(item.getUrl()).into((ImageView) helper.getView(R.id.imageViewItem));
+        }
     }
 
     //获取json 初始化数据
@@ -253,43 +257,42 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
         recyclerView.setLayoutManager(gridManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
-        mypageAdapter = new PageAdapter(mContext, sister);
+        mypageAdapter = new Mydapter(R.layout.recyclerview_item,sister.getResults());
+        View headView = View.inflate(mContext, R.layout.header_layout,null);
+        headView.setLayoutParams(new DrawerLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
+        headView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerView.scrollToPosition(0);
+                ToastUtils.showShort("sssssssssssssssssss");
+            }
+        });
+        mypageAdapter.addHeaderView(headView,0, LinearLayout.VERTICAL);
         //设置adapter
         recyclerView.setAdapter(mypageAdapter);
         //设置Item增加、移除动画
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        mypageAdapter.setOnItemClickListener(new PageAdapter.OnItemClickListener() {
+        mypageAdapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
+        mypageAdapter.isFirstOnly(false);
+
+        mypageAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(int position, boolean flag) {
-                //点击
-                //ToastUtils.showShort("" + position);
-//                if (flag) {
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent(mContext, ShowActivity.class);
-        //        intent.putExtra("url", sister.getResults().get(position).getUrl());
                 intent.putExtra("position", position + "");
                 intent.putExtra("page", page + "");
-                intent.putExtra("sister",sister);
+                intent.putExtra("ResultsBean",sister.getResults().get(position));
                 startActivity(intent);
-                Log.e(TAG, "short");
-//                }else{
-//                    ToastUtils.showShort("刷新中！");
-//                    Log.e(TAG,"short:"+position);
-//                }
+                Log.e(TAG, "short"+position);
             }
-
-            @Override
-            public void onItemLongClick(int position, boolean flag) {
-                if (flag) {
-                    // TODO: 2019/6/25 长按效果
-                    //长按
-//                    ToastUtils.showLong("changan" + position);
-                    Log.e(TAG, "long");
-                }
-            }
-
         });
-
+        mypageAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
+                Log.e(TAG, "long"+position);
+                return true;
+            }
+        });
     }
 
     @Override

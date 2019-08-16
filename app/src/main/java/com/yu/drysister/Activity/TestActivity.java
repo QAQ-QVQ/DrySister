@@ -1,89 +1,83 @@
 package com.yu.drysister.Activity;
 
-import androidx.viewpager.widget.ViewPager;
-
-import androidx.appcompat.app.AppCompatActivity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
-import com.jaren.lib.view.LikeView;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.blankj.utilcode.util.ToastUtils;
+import com.bumptech.glide.Glide;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
+import com.yu.drysister.Adapter.PageAdapter;
+import com.yu.drysister.Bean.ResultsBean;
+import com.yu.drysister.Bean.Sister;
 import com.yu.drysister.R;
+
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 public class TestActivity extends BaseActivity {
 
-    ViewPager viewPager;
-    RefreshLayout refreshLayout;
-    LikeView likeView1;
-    LikeView likeView2;
-    LikeView likeView3;
-    LikeView likeView4;
+    @BindView(R.id.recyclerview)
+    RecyclerView recyclerView;
+    @BindView(R.id.refreshLayout)
+    LinearLayout refreshLayout;
+    Sister sister;
+    Context mContext;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
-//        likeView1 = findViewById(R.id.lv_icon1);
-//        likeView1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                likeView1.toggle();
-//            }
-//        });
-//        likeView2 = findViewById(R.id.lv_icon2);
-//        likeView2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                likeView2.toggle();
-//            }
-//        });
-//        likeView3 = findViewById(R.id.lv_icon3);
-//        likeView3.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                likeView3.toggle();
-//            }
-//        });
-//        likeView4 = findViewById(R.id.lv_icon4);
-//        likeView4.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                likeView4.toggle();
-//            }
-//        });
-        //改变状态
-//        likeView.setChecked(true);
-//        likeView.setCheckedWithoutAnimator(true);
+        ButterKnife.bind(this);
+        sister = (Sister) getIntent().getSerializableExtra("sister");
 
-        //将状态改为相反
-//        likeView.toggle();
-//        likeView.toggleWithoutAnimator();
+        RecyclerView.LayoutManager gridManager = new GridLayoutManager(mContext, 2);
+        ((GridLayoutManager) gridManager).setRecycleChildrenOnDetach(true);
+        //设置布局管理器
+        recyclerView.setLayoutManager(gridManager);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setNestedScrollingEnabled(false);
+        Mydapter mydapter = new Mydapter(R.layout.recyclerview_item,sister.getResults());
+        //设置adapter
+        recyclerView.setAdapter(mydapter);
+        //设置Item增加、移除动画
+        mydapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
 
-//        viewPager = findViewById(R.id.view_pager);
-        //   getJson();
-//        refreshLayout = (RefreshLayout) findViewById(R.id.refreshLayout);
-//        //设置 Header 为 贝塞尔雷达 样式
-////        refreshLayout.setRefreshHeader(new BezierRadarHeader(this).setEnableHorizontalDrag(true));
-//        //设置 Footer 为 球脉冲 样式
-////        refreshLayout.setRefreshFooter(new BallPulseFooter(this).setSpinnerStyle(SpinnerStyle.Scale));
-//        refreshLayout.setEnableRefresh(false);//取消下拉刷新
-//        refreshLayout.setEnableLoadMore(true);
-//        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
-//            @Override
-//            public void onRefresh(RefreshLayout refreshlayout) {
-//                refreshlayout.finishRefresh(2000/*,false*/);//传入false表示刷新失败
-//            }
-//        });
-//        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
-//            @Override
-//            public void onLoadMore(RefreshLayout refreshlayout) {
-//                refreshlayout.finishLoadMore(2000/*,false*/);//传入false表示加载失败
-//
-//            }
-//        });
+        mydapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                ToastUtils.showShort("shout"+position);
+            }
+        });
+        mydapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
+                ToastUtils.showShort("long:"+position);
+                return true;
+            }
+        });
 
     }
+    class Mydapter extends BaseQuickAdapter<ResultsBean,BaseViewHolder> {
+        public Mydapter(int layoutResId, @Nullable List<ResultsBean> data) {
+            super(layoutResId, data);
+        }
 
+        @Override
+        protected void convert(@NonNull BaseViewHolder helper, ResultsBean item) {
+            helper.setText(R.id.create_time,item.getDesc());
+            Glide.with(TestActivity.this).load(item.getUrl()).into((ImageView) helper.getView(R.id.imageViewItem));
+        }
+    }
 }
