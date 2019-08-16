@@ -268,7 +268,7 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
                 ToastUtils.showShort("sssssssssssssssssss");
             }
         });
-        mypageAdapter.addHeaderView(headView,0, LinearLayout.VERTICAL);
+        mypageAdapter.addHeaderView(headView);
         //设置adapter
         recyclerView.setAdapter(mypageAdapter);
         //设置Item增加、移除动画
