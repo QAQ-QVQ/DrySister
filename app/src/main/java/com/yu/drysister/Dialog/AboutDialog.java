@@ -18,23 +18,25 @@ public class AboutDialog extends Dialog {
     private Context mContext;
     private boolean cancelable;
     private onItemClicklisner cancelListener;
+    private View view;
 
     /**
      * @param context
      * @param cancelable 点击外部，返回是否可以dismiss
      * @param cancelListener 点击回调
      */
-    public AboutDialog(@NonNull Context context, boolean cancelable, @Nullable onItemClicklisner cancelListener) {
+    public AboutDialog(@NonNull Context context, boolean cancelable,View view, @Nullable onItemClicklisner cancelListener) {
         super(context,R.style.MyDialog);
         this.mContext = context;
         this.cancelable = cancelable;
         this.cancelListener = cancelListener;
+        this.view = view;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View view =  LayoutInflater.from(mContext).inflate(R.layout.dialog_buttom, null);
+        if (view == null) view =  LayoutInflater.from(mContext).inflate(R.layout.dialog_about, null);
         setContentView(view);//这行一定要写在前面
         setCancelable(cancelable);//点击外部不可dismiss
         setCanceledOnTouchOutside(cancelable);//控制返回键是否dismiss
@@ -52,6 +54,7 @@ public class AboutDialog extends Dialog {
                 }
             }
         });
+
     }
     public interface onItemClicklisner{
         void onclicklistner();

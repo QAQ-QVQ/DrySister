@@ -5,4 +5,8 @@
     <string name="download">下载</string>
     <string name="test">测试</string>
     <string name="not_up">没有上一张了</string>
+    <string name="about_library"> \ncom.lzy.net:okgo:3.0.4 \n com.google.code.gson:gson:2.2.4 \n com.tuyenmonkey:mkloader:1.4.0 \n com.blankj:utilcode:1.12.5 \n com.bm.photoview:library:1.4.1 \n com.github.bumptech.glide:glide:4.9.0 \n com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-28 \n com.jaren:likeview:1.2.2 \n com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47-androidx \n com.jakewharton:butterknife:10.1.0 \n com.jakewharton:butterknife-compiler:10.1.0</string>
+    <string name="about_me">作者:仓鼠 （括弧：也许是一个有趣的人）\nQQ：  727005920\nB站uid：30362795\n微信：██████\n刮开即可获得微信，刮不开使劲！\n</string>
+    <string name="about_ous">每天一张精选二次元纸图(主页中点击妹纸打开妹纸大图)\n数据内容来源于代码家的 http://gank.io \n首先非常感谢你使用这个APP\n这是一个兴趣使然的APP，最初也不知道要做成什么样，\n就凭着用爱发电做到了现在，\n所以如果你有什么想法和好的灵感可以和作者联系\n也许就成为了一个非常棒的APP了呐（笑）\n本APP仅做交流学习只用\n就这样了，暂时只想到这么多，下次想到了在写吧。</string>
+    <string name="about_test">这是一个测试页面，\n里面的功能是作者正在考虑要不要添加的一些功能，\n如果你有更好的想法或者想要添加的功能\n都可以向作者提供你的建议\n当前测试功能：自由拖动。\n可选功能：右滑删除</string>
 </resources>

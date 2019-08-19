@@ -19,12 +19,13 @@
         android:supportsRtl="true"
         android:theme="@style/TranslucentTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activity.CollectionActivity"></activity>
+        <activity android:name=".Activity.AboutActivity"></activity>
+        <activity android:name=".Activity.CollectionActivity" />
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity android:name=".Activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 
 
 import androidx.appcompat.app.ActionBar;
+
 import android.os.Bundle;
 
 import androidx.appcompat.widget.Toolbar;
@@ -76,7 +77,7 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
     private PermissionsUtil permissionsUtil;//权限
     private Context mContext;
     private RefreshLayout refreshLayout;
-//    private Toolbar toolbar;
+    private Toolbar toolbar;
     private Sister sister;
     //  public static ArrayList<Integer> posion;
     private Mydapter mypageAdapter;
@@ -110,32 +111,8 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
     //获取UI
     private void initUI() {
         recyclerView = findViewById(R.id.recyclerview);
-//        toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                switch (item.getItemId()) {
-//                    case R.id.tv_test:
-//                        Toast.makeText(mContext, "测试", Toast.LENGTH_SHORT).show();
-//                        Intent intentL = new Intent(MainActivity.this,TestActivity.class);
-//                        intentL.putExtra("sister",sister);
-//                        startActivity(intentL);
-//                        break;
-//                    case R.id.tv_about:
-//                        new AboutDialog(mContext, true, new AboutDialog.onItemClicklisner() {
-//                            @Override
-//                            public void onclicklistner() {
-//                                Toast.makeText(mContext, "关于我", Toast.LENGTH_SHORT).show();
-//                            }
-//                        }).show();
-//                        break;
-//                }
-//                return false;
-//            }
-//        });
 
-        refreshLayout =  findViewById(R.id.refreshLayout);
+        refreshLayout = findViewById(R.id.refreshLayout);
         /**
          * 实现RecyclerView上下滑动的显示和隐藏****
          *
@@ -148,9 +125,6 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-//                Log.e(TAG, "onScrolled dy: " + dy);
-//                Log.e(TAG, "onScrolled dx: " + dx);
-//                Log.e(TAG, "-------------------- onScrolled: --------------------");
                 int firstVisibleItem = ((GridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
                 if (firstVisibleItem >= 1) {
                     if (scrolledDistance > HIDE_THRESHOLD && controlsVisible) {
@@ -171,21 +145,9 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
             }
         });
 
-        //设置 Header 为 贝塞尔雷达 样式
-//        refreshLayout.setRefreshHeader(new BezierRadarHeader(this).setEnableHorizontalDrag(true));
-        //设置 Footer 为 球脉冲 样式
-//        refreshLayout.setRefreshFooter(new BallPulseFooter(this).setSpinnerStyle(SpinnerStyle.Scale));
         refreshLayout.setEnableRefresh(false);//取消下拉刷新
         refreshLayout.setEnableLoadMore(true);
         refreshLayout.setDisableContentWhenLoading(true);//是否在加载的时候禁止列表的操作
-        //下拉刷新
-        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshlayout) {
-                getJson();
-//                refreshlayout.finishRefresh(2000/*,false*/);//传入false表示刷新失败
-            }
-        });
         //上拉加载
         refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
@@ -198,11 +160,11 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
     }
 
     private void hideViews() {
-//        toolbar.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+        toolbar.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(4));
     }
 
     private void showViews() {
-//        toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+        toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(4));
     }
 
     class Mydapter extends BaseQuickAdapter<ResultsBean, BaseViewHolder> {
@@ -212,7 +174,7 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
 
         @Override
         protected void convert(@NonNull BaseViewHolder helper, ResultsBean item) {
-            helper.setText(R.id.create_time,item.getDesc());
+            helper.setText(R.id.create_time, item.getDesc());
             Glide.with(MainActivity.this).load(item.getUrl()).into((ImageView) helper.getView(R.id.imageViewItem));
         }
     }
@@ -221,7 +183,7 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
     public void getJson() {
         String HomeUrl = BASE_URL + number + "/" + page;
         IwebManager iwebManager = WebFactory.getWebManager();
-        iwebManager.get(HomeUrl,"pic" + page, new IwebCallback() {
+        iwebManager.get(HomeUrl, "pic" + page, new IwebCallback() {
             @Override
             public void onSuccess(String response) {
                 if (response != null) {
@@ -241,7 +203,7 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
 
             @Override
             public void onFailure(Throwable throwable) {
-                refreshLayout.finishLoadMore(false);//下拉加载失败
+                refreshLayout.finishLoadMore(false);//上拉加载失败
                 //refreshLayout.finishLoadMore(2000/*,false*/);//2s后延迟执行
                 //当网络未连接且无缓存时出现的提示
                 ToastUtils.showShort("网络未连接！");
@@ -257,17 +219,10 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
         recyclerView.setLayoutManager(gridManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
-        mypageAdapter = new Mydapter(R.layout.recyclerview_item,sister.getResults());
-        View headView = View.inflate(mContext, R.layout.header_layout,null);
-        headView.setLayoutParams(new DrawerLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-        headView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recyclerView.scrollToPosition(0);
-                ToastUtils.showShort("sssssssssssssssssss");
-            }
-        });
+        mypageAdapter = new Mydapter(R.layout.recyclerview_item, sister.getResults());
+        View headView = View.inflate(mContext, R.layout.header_layout, null);
+        headView.setLayoutParams(new DrawerLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 120));
+        toolbarInit();
         mypageAdapter.addHeaderView(headView);
         //设置adapter
         recyclerView.setAdapter(mypageAdapter);
@@ -281,16 +236,52 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
                 Intent intent = new Intent(mContext, ShowActivity.class);
                 intent.putExtra("position", position + "");
                 intent.putExtra("page", page + "");
-                intent.putExtra("ResultsBean",sister.getResults().get(position));
+                intent.putExtra("ResultsBean", sister.getResults().get(position));
                 startActivity(intent);
-                Log.e(TAG, "short"+position);
+                Log.e(TAG, "short" + position);
             }
         });
         mypageAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
-                Log.e(TAG, "long"+position);
+                Log.e(TAG, "long" + position);
                 return true;
+            }
+        });
+    }
+
+    private void toolbarInit() {
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerView.scrollToPosition(0);
+            }
+        });
+
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.tv_test:
+//                        Toast.makeText(mContext, "测试", Toast.LENGTH_SHORT).show();
+                        Intent intentL = new Intent(MainActivity.this, TestActivity.class);
+                        intentL.putExtra("sister", sister);
+                        startActivity(intentL);
+                        break;
+                    case R.id.tv_about:
+//                        new AboutDialog(mContext, true,null, new AboutDialog.onItemClicklisner() {
+//                            @Override
+//                            public void onclicklistner() {
+//                                Toast.makeText(mContext, "关于我", Toast.LENGTH_SHORT).show();
+//
+//                            }
+//                        }).show();
+                        startActivity(new Intent(MainActivity.this,AboutActivity.class));
+                        break;
+                }
+                return false;
             }
         });
     }

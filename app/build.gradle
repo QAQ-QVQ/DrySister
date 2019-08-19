@@ -66,7 +66,7 @@ dependencies {
     //动态按钮
     implementation 'com.jaren:likeview:1.2.2'
     //BaseRecyclerViewAdapterHelper
-    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47-androidx'
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47-androidx'
     //butterknife
     implementation 'com.jakewharton:butterknife:10.1.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'

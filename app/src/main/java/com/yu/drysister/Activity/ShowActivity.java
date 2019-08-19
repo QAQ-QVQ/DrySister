@@ -201,7 +201,7 @@ public class ShowActivity extends BaseActivity {
     }
 
     private void showDialog() {
-        new DialogFromBottom(mcontext, true, true, new DialogFromBottom.onItemClicklisner() {
+        new DialogFromBottom(mcontext, true, true, new DialogFromBottom.OnItemClicklisner() {
             @Override
             public void onclicklistner() {
                 Toast.makeText(mcontext, "弹出框", Toast.LENGTH_SHORT).show();

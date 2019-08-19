@@ -8,25 +8,24 @@
     android:background="@color/gray"
     android:orientation="vertical"
     tools:context=".Activity.MainActivity">
-
 <FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"/>
-
-    <!--<androidx.appcompat.widget.Toolbar-->
-        <!--android:id="@+id/toolbar"-->
-        <!--style="@style/AppTheme.AppBarOverlay"-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--android:background="@color/colorPrimary"-->
-        <!--app:popupTheme="@style/ToolBarPopupThem"-->
-        <!--app:title="康康妹子·养养眼"/>-->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_gravity="left|top"
+        style="@style/AppTheme.AppBarOverlay"
+        android:background="@color/colorPrimary"
+        app:popupTheme="@style/ToolBarPopupThem"
+        app:title="康康妹子·养养眼"/>
 </FrameLayout>
+
+
 
 
     <!--<androidx.core.widget.NestedScrollView-->

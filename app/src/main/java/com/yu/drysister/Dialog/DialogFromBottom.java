@@ -15,18 +15,19 @@ import android.widget.LinearLayout;
 import com.yu.drysister.R;
 
 public class DialogFromBottom  extends Dialog {
-    private onItemClicklisner onItemClicklisner;
+    private OnItemClicklisner onItemClicklisner;
     private boolean iscancelable;//控制点击dialog外部是否dismiss
     private boolean isBackCancelable;//控制返回键是否dismiss
     private View view;
     private Context context;
     //这里的view其实可以替换直接传layout过来的 因为各种原因没传(lan)
-    public DialogFromBottom(Context context, View view, boolean isCancelable,boolean isBackCancelable) {
+    public DialogFromBottom(Context context, View view, boolean isCancelable,boolean isBackCancelable,OnItemClicklisner onItemClicklisner) {
         super(context, R.style.MyDialog);
         this.context = context;
         this.view = view;
         this.iscancelable = isCancelable;
         this.isBackCancelable = isBackCancelable ;
+        this.onItemClicklisner = onItemClicklisner;
     }
 
     /**
@@ -35,7 +36,7 @@ public class DialogFromBottom  extends Dialog {
      * @param isBackCancelable 控制返回键是否dismiss
      * @param onItemClicklisner 点击回调
      */
-    public DialogFromBottom(Context context, boolean isCancelable,boolean isBackCancelable,onItemClicklisner onItemClicklisner) {
+    public DialogFromBottom(Context context, boolean isCancelable,boolean isBackCancelable,OnItemClicklisner onItemClicklisner) {
         super(context, R.style.MyDialog);
         View root =  LayoutInflater.from(context).inflate(R.layout.dialog_buttom, null);
         this.context = context;
@@ -66,7 +67,7 @@ public class DialogFromBottom  extends Dialog {
         window.setAttributes(params);
     }
 
-    public interface onItemClicklisner{
+    public interface OnItemClicklisner{
         void onclicklistner();
     }
 }

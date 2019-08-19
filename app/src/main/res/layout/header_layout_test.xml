@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/gray"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_margin="5dp"
+        android:background="@drawable/shape_corner"
+        android:orientation="vertical"
+        android:elevation="4dp"
+        android:layout_height="match_parent">
+        <TextView
+            style="@style/button_width"
+            android:textColor="@color/violet"
+            android:text="@string/about_test"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_weight="0.3"
+            android:layout_height="0dp">
+            <!--<Switch-->
+                <!--android:id="@+id/ItemDrag"-->
+                <!--android:text="可以任意拖动"-->
+                <!--android:padding="10dp"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content" />-->
+            <Switch
+                android:id="@+id/ItemSwipe"
+                android:text="可以右滑删除"
+                android:padding="10dp"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
