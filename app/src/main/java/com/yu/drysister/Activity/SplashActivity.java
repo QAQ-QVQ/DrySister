@@ -31,15 +31,16 @@ import com.yu.drysister.Utils.ImageLoad;
  * 引导页
  */
 public class SplashActivity extends BaseActivity {
-    private final String url =  "https://acg.toubiec.cn/random"; //;https://acg.toubiec.cn/random?return=json// 随机二次元图片接口
+    private String url; //;https://acg.toubiec.cn/random?return=json// 随机二次元图片接口
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_splash);
+        url = getResources().getString(R.string.sister_random);
         ImageView splash = findViewById(R.id.splash_image);
-        Glide.with(this).load(url).placeholder(R.drawable.icon).into(splash);
-      //  new ImageLoad(url,splash,this);
+//        Glide.with(this).load(url).placeholder(R.drawable.icon).into(splash);
+        new ImageLoad(url,splash,this);
          RelativeLayout layoutSplash=(RelativeLayout) findViewById(R.id.activity_splash);
         AlphaAnimation alphaAnimation=new AlphaAnimation(0.1f,1.0f);
         alphaAnimation.setDuration(3000);//设置动画播放时长1000毫秒（1秒）
@@ -48,7 +49,7 @@ public class SplashActivity extends BaseActivity {
         alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                ToastUtils.showShort("第一次加载可能会有卡顿，请耐心等待。");
+                ToastUtils.showShort(getResources().getString(R.string.login));
             }
             //动画结束
             @Override

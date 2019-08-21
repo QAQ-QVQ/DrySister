@@ -6,7 +6,7 @@
     android:elevation="4dp"
     android:layout_margin="5dp"
     android:background="@drawable/shape_corner"
-    android:layout_height="430dp">
+    android:layout_height="360dp">
 
 <com.yu.drysister.Utils.CornerImageView
     app:left_top_radius="10dp"

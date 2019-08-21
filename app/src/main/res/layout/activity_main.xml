@@ -22,27 +22,8 @@
         style="@style/AppTheme.AppBarOverlay"
         android:background="@color/colorPrimary"
         app:popupTheme="@style/ToolBarPopupThem"
-        app:title="康康妹子·养养眼"/>
+        app:title="@string/toolbar_title"/>
 </FrameLayout>
-
-
-
-
-    <!--<androidx.core.widget.NestedScrollView-->
-        <!--android:id="@+id/nestd_scrollview"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:fillViewport="true">-->
-
-        <!--<androidx.recyclerview.widget.RecyclerView-->
-            <!--android:id="@+id/recyclerview"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:scaleType="centerCrop">-->
-
-        <!--</androidx.recyclerview.widget.RecyclerView>-->
-
-    <!--</androidx.core.widget.NestedScrollView>-->
 
 
 </com.scwang.smartrefresh.layout.SmartRefreshLayout>

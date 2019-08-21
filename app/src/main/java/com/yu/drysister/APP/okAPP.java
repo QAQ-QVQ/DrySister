@@ -6,8 +6,7 @@ import com.blankj.utilcode.util.Utils;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cache.CacheMode;
-import com.umeng.commonsdk.UMConfigure;
-import com.umeng.socialize.PlatformConfig;
+
 
 public class okAPP extends Application {
     private static okAPP context;
@@ -18,14 +17,6 @@ public class okAPP extends Application {
         initOkGo();
         context = this;
         Utils.init(this);
-        UMConfigure.init(this,"5d1d5f7c3fc19571ef001109"
-                ,"umeng",UMConfigure.DEVICE_TYPE_PHONE,"d1965fe55ba61afcc7bcdeda35e4799d");//58edcfeb310c93091c000be2 5965ee00734be40b580001a0
-        //微信
-        PlatformConfig.setWeixin("Appkey","AppSecret");
-        //新浪微博(第三个参数为回调地址)
-    //    PlatformConfig.setSinaWeibo("Appkey", "AppSecret","http://sns.whalecloud.com/sina2/callback");
-        //QQ
-        PlatformConfig.setQQZone("AppId", "AppSecret");
     }
 
     private void initOkGo() {

@@ -10,6 +10,8 @@
         <item name="android:textColorSecondary">#ffffff</item>
         <!--修改toolbar文字颜色-->
         <item name="android:textColorPrimary">#ffffff</item>
+        <!-- 允许使用transitions -->
+        <item name="android:windowContentTransitions">true</item>
     </style>
 
     <!--values-v21。5.0 以上提供了 setStatusBarColor()  方法设置状态栏颜色。-->

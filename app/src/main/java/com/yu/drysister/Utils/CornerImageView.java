@@ -10,7 +10,7 @@ import android.view.View;
 
 import androidx.appcompat.widget.AppCompatImageView;
 
-import com.blankj.utilcode.util.LogUtils;
+
 import com.yu.drysister.R;
 
 public class CornerImageView extends AppCompatImageView {

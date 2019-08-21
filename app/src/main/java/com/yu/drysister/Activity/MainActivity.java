@@ -1,6 +1,7 @@
 package com.yu.drysister.Activity;
 
 
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 
@@ -73,7 +74,7 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
     private int page = 1;//当前页数
     private int number = 28; //当前请求数目
     private static final String TAG = "network";
-    private static final String BASE_URL = "http://gank.io/api/data/福利/";
+    private static String BASE_URL;
     private PermissionsUtil permissionsUtil;//权限
     private Context mContext;
     private RefreshLayout refreshLayout;
@@ -88,6 +89,8 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
+        BASE_URL = getResources().getString(R.string.sister_url);
+
         //  posion = new ArrayList<Integer>();
         initJurisdiction();
     }
@@ -111,7 +114,6 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
     //获取UI
     private void initUI() {
         recyclerView = findViewById(R.id.recyclerview);
-
         refreshLayout = findViewById(R.id.refreshLayout);
         /**
          * 实现RecyclerView上下滑动的显示和隐藏****
@@ -175,7 +177,7 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
         @Override
         protected void convert(@NonNull BaseViewHolder helper, ResultsBean item) {
             helper.setText(R.id.create_time, item.getDesc());
-            Glide.with(MainActivity.this).load(item.getUrl()).into((ImageView) helper.getView(R.id.imageViewItem));
+            Glide.with(MainActivity.this).load(item.getUrl()).placeholder(R.drawable.icon).into((ImageView) helper.getView(R.id.imageViewItem));
         }
     }
 
@@ -195,7 +197,7 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
                         Sister sisterBean = new Gson().fromJson(response, Sister.class);
                         sister.addResults(sisterBean.getResults());
                         mypageAdapter.notifyDataSetChanged();
-                        ToastUtils.showLong("加载成功！");
+                        ToastUtils.showLong(getResources().getString(R.string.loading_true));
                         refreshLayout.finishLoadMore(true);//传入true表示加载成功
                     }
                 }
@@ -206,7 +208,7 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
                 refreshLayout.finishLoadMore(false);//上拉加载失败
                 //refreshLayout.finishLoadMore(2000/*,false*/);//2s后延迟执行
                 //当网络未连接且无缓存时出现的提示
-                ToastUtils.showShort("网络未连接！");
+                ToastUtils.showShort(getResources().getString(R.string.net_false));
             }
         });
     }
@@ -221,7 +223,7 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
         recyclerView.setNestedScrollingEnabled(false);
         mypageAdapter = new Mydapter(R.layout.recyclerview_item, sister.getResults());
         View headView = View.inflate(mContext, R.layout.header_layout, null);
-        headView.setLayoutParams(new DrawerLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 120));
+        headView.setLayoutParams(new DrawerLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 150));
         toolbarInit();
         mypageAdapter.addHeaderView(headView);
         //设置adapter
@@ -237,7 +239,7 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
                 intent.putExtra("position", position + "");
                 intent.putExtra("page", page + "");
                 intent.putExtra("ResultsBean", sister.getResults().get(position));
-                startActivity(intent);
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(MainActivity.this).toBundle());
                 Log.e(TAG, "short" + position);
             }
         });
@@ -265,19 +267,11 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.tv_test:
-//                        Toast.makeText(mContext, "测试", Toast.LENGTH_SHORT).show();
                         Intent intentL = new Intent(MainActivity.this, TestActivity.class);
                         intentL.putExtra("sister", sister);
                         startActivity(intentL);
                         break;
                     case R.id.tv_about:
-//                        new AboutDialog(mContext, true,null, new AboutDialog.onItemClicklisner() {
-//                            @Override
-//                            public void onclicklistner() {
-//                                Toast.makeText(mContext, "关于我", Toast.LENGTH_SHORT).show();
-//
-//                            }
-//                        }).show();
                         startActivity(new Intent(MainActivity.this,AboutActivity.class));
                         break;
                 }

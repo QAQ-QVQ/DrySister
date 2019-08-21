@@ -52,8 +52,10 @@
 }
 
 #Fragment不需要在AndroidManifest.xml中注册，需要额外保护下
--keep public class * extends android.support.v4.app.Fragment
--keep public class * extends android.app.Fragment
+-keep public class * extends androidx.appcompat.app.AppCompatActivity
+-keep public class com.yu.drysister.Utils.**
+-keep public class com.lzy.net
+-keep public class com.yu.drysister.Bean.**
 
 # 保持测试相关的代码
 -dontnote junit.framework.**
@@ -61,13 +63,9 @@
 -dontwarn android.test.**
 -dontwarn android.support.test.**
 -dontwarn org.junit.**
+-dontwarn com.lzy.net
+-dontwarn com.com.blankj
+-dontwarn com.com.scwang.**
+-dontwarn com.com.com.github.**
 -ignorewarnings
--keep class package.*.model.**{*;}
--keep class com.umeng.** {*;}
--keepclassmembers class * {
-   public <init> (org.json.JSONObject);
-}
--keepclassmembers enum * {
-    public static **[] values();
-    public static ** valueOf(java.lang.String);
-}
+
