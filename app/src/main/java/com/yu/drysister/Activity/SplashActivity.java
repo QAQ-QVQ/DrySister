@@ -15,6 +15,7 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -63,5 +64,15 @@ public class SplashActivity extends BaseActivity {
             public void onAnimationRepeat(Animation animation) {
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (SPUtils.getInstance().getBoolean("splash")){
+            Intent intent=new Intent(SplashActivity.this,MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 }

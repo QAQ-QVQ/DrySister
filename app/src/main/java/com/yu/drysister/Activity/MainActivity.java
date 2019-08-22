@@ -32,9 +32,11 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -83,14 +85,14 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
     //  public static ArrayList<Integer> posion;
     private Mydapter mypageAdapter;
     private boolean isFirst = true;
-
+    private boolean splash = false;
+    private TextView tv_spleash;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
         BASE_URL = getResources().getString(R.string.sister_url);
-
         //  posion = new ArrayList<Integer>();
         initJurisdiction();
     }
@@ -98,6 +100,11 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+        if (SPUtils.getInstance().getBoolean("splash")){
+            menu.getItem(1).setIcon(R.drawable.checked);
+        }else {
+            menu.getItem(1).setIcon(R.drawable.check);
+        }
         return true;
     }
 
@@ -115,6 +122,7 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
     private void initUI() {
         recyclerView = findViewById(R.id.recyclerview);
         refreshLayout = findViewById(R.id.refreshLayout);
+        tv_spleash = findViewById(R.id.tv_spleash);
         /**
          * 实现RecyclerView上下滑动的显示和隐藏****
          *
@@ -163,10 +171,12 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
 
     private void hideViews() {
         toolbar.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(4));
+        tv_spleash.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(4));
     }
 
     private void showViews() {
         toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(4));
+        tv_spleash.animate().translationY(0).setInterpolator(new DecelerateInterpolator(4));
     }
 
     class Mydapter extends BaseQuickAdapter<ResultsBean, BaseViewHolder> {
@@ -262,6 +272,7 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
             }
         });
 
+
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -273,6 +284,15 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
                         break;
                     case R.id.tv_about:
                         startActivity(new Intent(MainActivity.this,AboutActivity.class));
+                        break;
+                    case R.id.tv_spleash:
+                        splash = !splash;
+                        SPUtils.getInstance().put("splash",splash);
+                        if (splash){
+                            item.setIcon(R.drawable.checked);
+                        }else {
+                            item.setIcon(R.drawable.check);
+                        }
                         break;
                 }
                 return false;
