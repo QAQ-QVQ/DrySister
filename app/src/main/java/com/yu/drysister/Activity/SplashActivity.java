@@ -19,8 +19,10 @@ import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.BitmapCallback;
@@ -40,8 +42,14 @@ public class SplashActivity extends BaseActivity {
         setContentView(R.layout.activity_splash);
         url = getResources().getString(R.string.sister_random);
         ImageView splash = findViewById(R.id.splash_image);
-//        Glide.with(this).load(url).placeholder(R.drawable.icon).into(splash);
-        new ImageLoad(url,splash,this);
+        //取消本地缓存
+        RequestOptions options = new RequestOptions()
+                .placeholder(R.drawable.icon)
+                .error(R.drawable.icon)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true);
+        Glide.with(this).load(url).apply(options).placeholder(R.drawable.icon).into(splash);
+//        new ImageLoad(url,splash,this);
          RelativeLayout layoutSplash=(RelativeLayout) findViewById(R.id.activity_splash);
         AlphaAnimation alphaAnimation=new AlphaAnimation(0.1f,1.0f);
         alphaAnimation.setDuration(3000);//设置动画播放时长1000毫秒（1秒）

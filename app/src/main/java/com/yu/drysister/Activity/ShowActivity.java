@@ -2,6 +2,7 @@ package com.yu.drysister.Activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -256,7 +257,9 @@ public class ShowActivity extends BaseActivity {
 //                showDialog();
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("image/*");
+
                 intent.putExtra(Intent.EXTRA_STREAM, uri);
+                if(getPackageManager().queryIntentActivities(intent,0).size() > 0)
                 startActivity(Intent.createChooser(intent, getResources().getString(R.string.share_to)));
                 break;
         }

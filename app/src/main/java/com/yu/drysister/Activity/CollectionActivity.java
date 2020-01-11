@@ -23,6 +23,7 @@ import java.util.List;
 
 /**
  * 收藏页面
+ * 废弃
  */
 public class CollectionActivity extends BaseActivity {
     private  String flag;

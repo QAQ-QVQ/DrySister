@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 
 import androidx.appcompat.app.ActionBar;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.Toolbar;
@@ -20,6 +22,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 
 import android.view.LayoutInflater;
@@ -39,12 +42,19 @@ import android.widget.Toast;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
 import com.lzy.okgo.OkGo;
+import com.lzy.okgo.adapter.Call;
 import com.lzy.okgo.cache.CacheMode;
+import com.lzy.okgo.callback.BitmapCallback;
 import com.lzy.okgo.callback.StringCallback;
+import com.lzy.okgo.convert.StringConvert;
 import com.lzy.okgo.model.Response;
 
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -61,9 +71,13 @@ import com.yu.drysister.Interface.IwebManager;
 import com.yu.drysister.R;
 
 import com.yu.drysister.Utils.DbLikeDefine;
+import com.yu.drysister.Utils.ImageLoad;
 import com.yu.drysister.Utils.PermissionsUtil;
 import com.yu.drysister.Utils.WebFactory;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.Inflater;
 
@@ -73,20 +87,22 @@ import java.util.zip.Inflater;
  */
 public class MainActivity extends BaseActivity implements PermissionsUtil.IPermissionsCallback {
     private RecyclerView recyclerView;
-    private int page = 1;//当前页数
+    private int page = 2;//当前页数
     private int number = 28; //当前请求数目
     private static final String TAG = "network";
     private static String BASE_URL;
     private PermissionsUtil permissionsUtil;//权限
     private Context mContext;
     private RefreshLayout refreshLayout;
-    private Toolbar toolbar;
+    public static Toolbar toolbar;
     private Sister sister;
+    //    private Sister sisterRe;
     //  public static ArrayList<Integer> posion;
     private Mydapter mypageAdapter;
-    private boolean isFirst = true;
+    private boolean isFirst = true, isNull = true;
     private boolean splash = false;
     private TextView tv_spleash;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,9 +116,9 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
-        if (SPUtils.getInstance().getBoolean("splash")){
+        if (SPUtils.getInstance().getBoolean("splash")) {
             menu.getItem(1).setIcon(R.drawable.checked);
-        }else {
+        } else {
             menu.getItem(1).setIcon(R.drawable.check);
         }
         return true;
@@ -123,6 +139,8 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
         recyclerView = findViewById(R.id.recyclerview);
         refreshLayout = findViewById(R.id.refreshLayout);
         tv_spleash = findViewById(R.id.tv_spleash);
+        toolbar = findViewById(R.id.toolbar);
+        toolbarInit();
         /**
          * 实现RecyclerView上下滑动的显示和隐藏****
          *
@@ -198,17 +216,21 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
         iwebManager.get(HomeUrl, "pic" + page, new IwebCallback() {
             @Override
             public void onSuccess(String response) {
+//                toolbar.setTitle(MainActivity.this.getResources().getString(R.string.loading));
                 if (response != null) {
                     if (isFirst) {
-                        sister = new Gson().fromJson(response, Sister.class);
+                        List<ResultsBean> resultsBeans = new ArrayList<>();
+                        MainActivity.this.sister = new Sister(false, resultsBeans);
+                        Sister sister = new Gson().fromJson(response, Sister.class);
                         isFirst = false;
-                        load();
+                        load(sister);
                     } else {
                         Sister sisterBean = new Gson().fromJson(response, Sister.class);
-                        sister.addResults(sisterBean.getResults());
-                        mypageAdapter.notifyDataSetChanged();
-                        ToastUtils.showLong(getResources().getString(R.string.loading_true));
-                        refreshLayout.finishLoadMore(true);//传入true表示加载成功
+//                        sister.addResults(sisterBean.getResults());
+                        load(sisterBean);
+//                        mypageAdapter.notifyDataSetChanged();
+//                        ToastUtils.showLong(getResources().getString(R.string.loading_true));
+
                     }
                 }
             }
@@ -224,7 +246,31 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
     }
 
     //加载图片
-    private void load() {
+    private void load(Sister sister) {
+        ImageLoad.load(this, sister, new ImageLoad.Iload() {
+            @Override
+            public void loadTrue(Sister sister) {
+                toolbar.setTitle(MainActivity.this.getResources().getString(R.string.toolbar_title));
+                if (sister.getResults().size() == 0) {
+                    page++;
+                    getJson();
+                } else {
+                    MainActivity.this.sister.addResults(sister.getResults());
+                    Toast.makeText(MainActivity.this, "当前有"+MainActivity.this.sister.getResults().size()+"张图", Toast.LENGTH_SHORT).show();
+                    if (isNull){
+                        setRecyclerView();
+                        isNull = false;
+                    }else {
+                        refreshLayout.finishLoadMore(true);//传入true表示加载成功
+                        mypageAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+        });
+
+    }
+
+    private void setRecyclerView() {
         RecyclerView.LayoutManager gridManager = new GridLayoutManager(mContext, 2);
         ((GridLayoutManager) gridManager).setRecycleChildrenOnDetach(true);
         //设置布局管理器
@@ -234,7 +280,6 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
         mypageAdapter = new Mydapter(R.layout.recyclerview_item, sister.getResults());
         View headView = View.inflate(mContext, R.layout.header_layout, null);
         headView.setLayoutParams(new DrawerLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 150));
-        toolbarInit();
         mypageAdapter.addHeaderView(headView);
         //设置adapter
         recyclerView.setAdapter(mypageAdapter);
@@ -263,7 +308,6 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
     }
 
     private void toolbarInit() {
-        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -283,14 +327,14 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
                         startActivity(intentL);
                         break;
                     case R.id.tv_about:
-                        startActivity(new Intent(MainActivity.this,AboutActivity.class));
+                        startActivity(new Intent(MainActivity.this, AboutActivity.class));
                         break;
                     case R.id.tv_spleash:
                         splash = !splash;
-                        SPUtils.getInstance().put("splash",splash);
-                        if (splash){
+                        SPUtils.getInstance().put("splash", splash);
+                        if (splash) {
                             item.setIcon(R.drawable.checked);
-                        }else {
+                        } else {
                             item.setIcon(R.drawable.check);
                         }
                         break;
@@ -303,8 +347,8 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
     @Override
     public void onPermissionsGranted(int requestCode, String... permission) {
         //权限获取成功
-        getJson();
         initUI();
+        getJson();
     }
 
     @Override

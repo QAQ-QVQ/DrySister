@@ -3,6 +3,7 @@ package com.yu.drysister.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.yu.drysister.R;
 
@@ -31,6 +32,8 @@ public class AboutActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.btn_more:
+                // TODO: 2020/1/11 关于页面的更多选项
+                Toast.makeText(this, "点不动吧！点不动就对了使劲点！！", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
