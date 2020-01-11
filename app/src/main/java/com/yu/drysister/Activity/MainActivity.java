@@ -1,6 +1,7 @@
 package com.yu.drysister.Activity;
 
 
+import android.Manifest;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
@@ -8,109 +9,89 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-
-import androidx.appcompat.app.ActionBar;
-
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
-
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
-import com.lzy.okgo.OkGo;
-import com.lzy.okgo.adapter.Call;
-import com.lzy.okgo.cache.CacheMode;
-import com.lzy.okgo.callback.BitmapCallback;
-import com.lzy.okgo.callback.StringCallback;
-import com.lzy.okgo.convert.StringConvert;
-import com.lzy.okgo.model.Response;
-
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-
-import com.yu.drysister.Adapter.PageAdapter;
 import com.yu.drysister.Bean.ResultsBean;
 import com.yu.drysister.Bean.Sister;
-import com.yu.drysister.Dialog.AboutDialog;
-
+import com.yu.drysister.Interface.ISisterView;
 import com.yu.drysister.Interface.IwebCallback;
 import com.yu.drysister.Interface.IwebManager;
+import com.yu.drysister.Presenter.Presenter;
 import com.yu.drysister.R;
-
-import com.yu.drysister.Utils.DbLikeDefine;
 import com.yu.drysister.Utils.ImageLoad;
-import com.yu.drysister.Utils.PermissionsUtil;
 import com.yu.drysister.Utils.WebFactory;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Inflater;
 
 
 /**
  * 主页面
  */
-public class MainActivity extends BaseActivity implements PermissionsUtil.IPermissionsCallback {
+public class MainActivity extends BaseActivity implements ISisterView {
     private RecyclerView recyclerView;
     private int page = 2;//当前页数
     private int number = 28; //当前请求数目
     private static final String TAG = "network";
     private static String BASE_URL;
-    private PermissionsUtil permissionsUtil;//权限
     private Context mContext;
     private RefreshLayout refreshLayout;
     public static Toolbar toolbar;
     private Sister sister;
-    //    private Sister sisterRe;
-    //  public static ArrayList<Integer> posion;
     private Mydapter mypageAdapter;
     private boolean isFirst = true, isNull = true;
     private boolean splash = false;
     private TextView tv_spleash;
-
+    private Presenter presenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
         BASE_URL = getResources().getString(R.string.sister_url);
-        //  posion = new ArrayList<Integer>();
-        initJurisdiction();
+        try {
+            // check权限
+            if ((ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED)
+                    || (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+                // 没有 ， 申请权限 权限数组
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            } else {
+                //权限获取成功
+                initUI();
+//                getJson();
+            }
+        } catch (Exception e) {
+            // 异常 继续申请
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        }
     }
 
     @Override
@@ -124,23 +105,46 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
         return true;
     }
 
-    //获取权限
-    private void initJurisdiction() {
-        permissionsUtil = PermissionsUtil
-                .with(this)
-                .requestCode(1)
-                .isDebug(true)
-                .permissions(PermissionsUtil.Permission.Storage.READ_EXTERNAL_STORAGE, PermissionsUtil.Permission.Storage.WRITE_EXTERNAL_STORAGE)
-                .request();
-    }
-
     //获取UI
     private void initUI() {
         recyclerView = findViewById(R.id.recyclerview);
         refreshLayout = findViewById(R.id.refreshLayout);
         tv_spleash = findViewById(R.id.tv_spleash);
         toolbar = findViewById(R.id.toolbar);
-        toolbarInit();
+        setSupportActionBar(toolbar);
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerView.scrollToPosition(0);
+            }
+        });
+
+
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.tv_test:
+                        Intent intentL = new Intent(MainActivity.this, TestActivity.class);
+                        intentL.putExtra("sister", sister);
+                        startActivity(intentL);
+                        break;
+                    case R.id.tv_about:
+                        startActivity(new Intent(MainActivity.this, AboutActivity.class));
+                        break;
+                    case R.id.tv_spleash:
+                        splash = !splash;
+                        SPUtils.getInstance().put("splash", splash);
+                        if (splash) {
+                            item.setIcon(R.drawable.checked);
+                        } else {
+                            item.setIcon(R.drawable.check);
+                        }
+                        break;
+                }
+                return false;
+            }
+        });
         /**
          * 实现RecyclerView上下滑动的显示和隐藏****
          *
@@ -182,9 +186,11 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
             public void onLoadMore(RefreshLayout refreshlayout) {
 //                refreshlayout.finishLoadMore(2000/*,false*/);//传入false表示加载失败
                 page++;
-                getJson();
+//                getJson();
+                presenter.BeanLoad(page,number);
             }
         });
+        BeanInit();
     }
 
     private void hideViews() {
@@ -197,87 +203,34 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
         tv_spleash.animate().translationY(0).setInterpolator(new DecelerateInterpolator(4));
     }
 
-    class Mydapter extends BaseQuickAdapter<ResultsBean, BaseViewHolder> {
-        public Mydapter(int layoutResId, @Nullable List<ResultsBean> data) {
-            super(layoutResId, data);
-        }
-
-        @Override
-        protected void convert(@NonNull BaseViewHolder helper, ResultsBean item) {
-            helper.setText(R.id.create_time, item.getDesc());
-            Glide.with(MainActivity.this).load(item.getUrl()).placeholder(R.drawable.icon).into((ImageView) helper.getView(R.id.imageViewItem));
-        }
+    @Override
+    public void BeanInit() {
+        presenter = new Presenter(this);
+        presenter.initModel();
     }
 
-    //获取json 初始化数据
-    public void getJson() {
-        String HomeUrl = BASE_URL + number + "/" + page;
-        IwebManager iwebManager = WebFactory.getWebManager();
-        iwebManager.get(HomeUrl, "pic" + page, new IwebCallback() {
-            @Override
-            public void onSuccess(String response) {
-//                toolbar.setTitle(MainActivity.this.getResources().getString(R.string.loading));
-                if (response != null) {
-                    if (isFirst) {
-                        List<ResultsBean> resultsBeans = new ArrayList<>();
-                        MainActivity.this.sister = new Sister(false, resultsBeans);
-                        Sister sister = new Gson().fromJson(response, Sister.class);
-                        isFirst = false;
-                        load(sister);
-                    } else {
-                        Sister sisterBean = new Gson().fromJson(response, Sister.class);
-//                        sister.addResults(sisterBean.getResults());
-                        load(sisterBean);
-//                        mypageAdapter.notifyDataSetChanged();
-//                        ToastUtils.showLong(getResources().getString(R.string.loading_true));
-
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                refreshLayout.finishLoadMore(false);//上拉加载失败
-                //refreshLayout.finishLoadMore(2000/*,false*/);//2s后延迟执行
-                //当网络未连接且无缓存时出现的提示
-                ToastUtils.showShort(getResources().getString(R.string.net_false));
-            }
-        });
+    @Override
+    public void BeanChange() {
+            refreshLayout.finishLoadMore(true);//传入true表示加载成功
+            mypageAdapter.notifyDataSetChanged();
     }
 
-    //加载图片
-    private void load(Sister sister) {
-        ImageLoad.load(this, sister, new ImageLoad.Iload() {
-            @Override
-            public void loadTrue(Sister sister) {
-                toolbar.setTitle(MainActivity.this.getResources().getString(R.string.toolbar_title));
-                if (sister.getResults().size() == 0) {
-                    page++;
-                    getJson();
-                } else {
-                    MainActivity.this.sister.addResults(sister.getResults());
-                    Toast.makeText(MainActivity.this, "当前有"+MainActivity.this.sister.getResults().size()+"张图", Toast.LENGTH_SHORT).show();
-                    if (isNull){
-                        setRecyclerView();
-                        isNull = false;
-                    }else {
-                        refreshLayout.finishLoadMore(true);//传入true表示加载成功
-                        mypageAdapter.notifyDataSetChanged();
-                    }
-                }
-            }
-        });
-
+    @Override
+    public void errMsg(String errMsg) {
+        Toast.makeText(mContext, errMsg, Toast.LENGTH_SHORT).show();
     }
 
-    private void setRecyclerView() {
+    @Override
+    public void BeanLoad() {
+        toolbar.setTitle(MainActivity.this.getResources().getString(R.string.toolbar_title));
+        Toast.makeText(MainActivity.this, "当前有" + presenter.sister.getResults().size() + "张图", Toast.LENGTH_SHORT).show();
         RecyclerView.LayoutManager gridManager = new GridLayoutManager(mContext, 2);
         ((GridLayoutManager) gridManager).setRecycleChildrenOnDetach(true);
         //设置布局管理器
         recyclerView.setLayoutManager(gridManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
-        mypageAdapter = new Mydapter(R.layout.recyclerview_item, sister.getResults());
+        mypageAdapter = new Mydapter(R.layout.recyclerview_item, presenter.sister.getResults());
         View headView = View.inflate(mContext, R.layout.header_layout, null);
         headView.setLayoutParams(new DrawerLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 150));
         mypageAdapter.addHeaderView(headView);
@@ -307,64 +260,28 @@ public class MainActivity extends BaseActivity implements PermissionsUtil.IPermi
         });
     }
 
-    private void toolbarInit() {
-        setSupportActionBar(toolbar);
-        toolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recyclerView.scrollToPosition(0);
-            }
-        });
+    class Mydapter extends BaseQuickAdapter<ResultsBean, BaseViewHolder> {
+        public Mydapter(int layoutResId, @Nullable List<ResultsBean> data) {
+            super(layoutResId, data);
+        }
 
-
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.tv_test:
-                        Intent intentL = new Intent(MainActivity.this, TestActivity.class);
-                        intentL.putExtra("sister", sister);
-                        startActivity(intentL);
-                        break;
-                    case R.id.tv_about:
-                        startActivity(new Intent(MainActivity.this, AboutActivity.class));
-                        break;
-                    case R.id.tv_spleash:
-                        splash = !splash;
-                        SPUtils.getInstance().put("splash", splash);
-                        if (splash) {
-                            item.setIcon(R.drawable.checked);
-                        } else {
-                            item.setIcon(R.drawable.check);
-                        }
-                        break;
-                }
-                return false;
-            }
-        });
-    }
-
-    @Override
-    public void onPermissionsGranted(int requestCode, String... permission) {
-        //权限获取成功
-        initUI();
-        getJson();
-    }
-
-    @Override
-    public void onPermissionsDenied(int requestCode, String... permission) {
-        //权限获取失败
+        @Override
+        protected void convert(@NonNull BaseViewHolder helper, ResultsBean item) {
+            helper.setText(R.id.create_time, item.getDesc());
+            Glide.with(MainActivity.this).load(item.getUrl()).placeholder(R.drawable.icon).into((ImageView) helper.getView(R.id.imageViewItem));
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        permissionsUtil.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED)
+                || (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+            // 没有 ， 申请权限 权限数组
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        } else {
+            initUI();
+        }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        permissionsUtil.onActivityResult(requestCode, resultCode, data);
-        super.onActivityResult(requestCode, resultCode, data);
-    }
 }

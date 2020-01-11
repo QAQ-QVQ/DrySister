@@ -8,11 +8,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 
 import com.blankj.utilcode.util.ToastUtils;
+import com.yu.drysister.Interface.ISisterView;
 
 /**
  * 打印生命周期
  */
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends AppCompatActivity  {
     private  String TAG ;
     private int param = 1;
 

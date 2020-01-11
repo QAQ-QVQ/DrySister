@@ -27,6 +27,7 @@ import com.bumptech.glide.request.target.Target;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.BitmapCallback;
 import com.lzy.okgo.model.Response;
+import com.yu.drysister.Config.SisterConfig;
 import com.yu.drysister.R;
 import com.yu.drysister.Utils.ImageLoad;
 
@@ -34,13 +35,12 @@ import com.yu.drysister.Utils.ImageLoad;
  * 引导页
  */
 public class SplashActivity extends BaseActivity {
-    private String url; //;https://acg.toubiec.cn/random?return=json// 随机二次元图片接口
+    //;https://acg.toubiec.cn/random?return=json// 随机二次元图片接口
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_splash);
-        url = getResources().getString(R.string.sister_random);
         ImageView splash = findViewById(R.id.splash_image);
         //取消本地缓存
         RequestOptions options = new RequestOptions()
@@ -48,7 +48,7 @@ public class SplashActivity extends BaseActivity {
                 .error(R.drawable.icon)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true);
-        Glide.with(this).load(url).apply(options).placeholder(R.drawable.icon).into(splash);
+        Glide.with(this).load(SisterConfig.SISTERR_RANDOM_URL).apply(options).placeholder(R.drawable.icon).into(splash);
 //        new ImageLoad(url,splash,this);
          RelativeLayout layoutSplash=(RelativeLayout) findViewById(R.id.activity_splash);
         AlphaAnimation alphaAnimation=new AlphaAnimation(0.1f,1.0f);
