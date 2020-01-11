@@ -68,7 +68,6 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.myViewHolder> 
                     //加载图片失败
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        // TODO: 2019/6/25 移除加载失败的图片
 //                        posion.add(position);
 //                        SisterUtils.sister.getResults().remove(position);
                         flag = false;
