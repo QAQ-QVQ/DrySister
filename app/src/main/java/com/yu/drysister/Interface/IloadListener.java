@@ -7,6 +7,13 @@ import com.yu.drysister.Bean.Sister;
  * TIME BY 15:52.
  **/
 public interface IloadListener {
-    void Success(Sister sister,boolean flag);
+    /**
+     * @param sister 成功回调
+     */
+    void Success(Sister sister);
+
+    /**
+     * @param errMsg 错误信息
+     */
     void Error(String errMsg);
 }

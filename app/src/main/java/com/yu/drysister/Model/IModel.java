@@ -11,6 +11,9 @@ import com.yu.drysister.Interface.IloadListener;
  * TIME BY 10:32.
  **/
 public interface IModel {
-    void InitBean(IloadListener iloadListener);
-    void BeanLoad(int page,int number,IloadListener iloadListener);
+    /**
+     *
+     * @param iloadListener 加载回调
+     */
+    void BeanLoad(IloadListener iloadListener);
 }

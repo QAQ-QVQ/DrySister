@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseItemDraggableAdapter;
@@ -30,8 +31,7 @@ import com.chad.library.adapter.base.listener.OnItemDragListener;
 import com.chad.library.adapter.base.listener.OnItemSwipeListener;
 import com.yu.drysister.Bean.ResultsBean;
 import com.yu.drysister.Bean.Sister;
-import com.yu.drysister.Dialog.AboutDialog;
-import com.yu.drysister.Dialog.DialogFromBottom;
+
 import com.yu.drysister.R;
 
 import java.util.List;
@@ -77,7 +77,13 @@ public class TestActivity extends BaseActivity {
         drag();
 //        Switch itemDrag = headView.findViewById(R.id.ItemDrag);
         Switch itemSwipe = headView.findViewById(R.id.ItemSwipe);
-
+        Switch Splash = headView.findViewById(R.id.SplashRun);
+        Splash.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SPUtils.getInstance().put("splash", isChecked);
+            }
+        });
 //        itemDrag.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 //            @Override
 //            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

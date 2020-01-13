@@ -37,7 +37,6 @@ import com.lzy.okgo.callback.FileCallback;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.model.Response;
 import com.yu.drysister.Bean.ResultsBean;
-import com.yu.drysister.Dialog.DialogFromBottom;
 import com.yu.drysister.R;
 
 import java.io.ByteArrayOutputStream;
@@ -139,7 +138,7 @@ public class ShowActivity extends BaseActivity {
             filePath.mkdirs();//不存在就新建一个目录
         File[] files = filePath.listFiles();
         for (int i = 0; i < files.length; i++) {
-//            Log.e(TAG, files[i].getName());
+//            Log.e(TAG, files[ISisterListener].getName());
             if (FileName.equals(files[i].getName())) {
                 return true;
             }
@@ -214,14 +213,6 @@ public class ShowActivity extends BaseActivity {
 //        }
 //    }
 
-    private void showDialog() {
-        new DialogFromBottom(mcontext, true, true, new DialogFromBottom.OnItemClicklisner() {
-            @Override
-            public void onclicklistner() {
-                Toast.makeText(mcontext, "弹出框", Toast.LENGTH_SHORT).show();
-            }
-        }).show();
-    }
 
     @Override
     protected void onDestroy() {
@@ -243,21 +234,12 @@ public class ShowActivity extends BaseActivity {
             case R.id.btn_dowonload:
                 dwonloadImage();
                 break;
-//            case R.id.btn_share:
-//                ToastUtils.showShort("待实现");
-////                new ShareAction(this).withText("请选择分享平台").setDisplayList(SHARE_MEDIA.QQ,SHARE_MEDIA.WEIXIN)
-////                        .setCallback(shareListener)
-//                //  .setShareboardclickCallback(shareBoardlistener)
-////                        .open();
-//                break;
             case R.id.btn_back:
                 finish();
                 break;
             case R.id.btn_share:
-//                showDialog();
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("image/*");
-
                 intent.putExtra(Intent.EXTRA_STREAM, uri);
                 if(getPackageManager().queryIntentActivities(intent,0).size() > 0)
                 startActivity(Intent.createChooser(intent, getResources().getString(R.string.share_to)));
